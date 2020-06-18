@@ -27,7 +27,7 @@ Author = 'Markus Szumovski'
 CompanyName = 'ThingsUNeed'
 
 # Copyright statement for this module
-Copyright = '2020 - Markus Szumovski'
+Copyright = '(c) 2020 - Markus Szumovski (ThingsUNeed)'
 
 # Description of the functionality provided by this module
 Description = 'Provides easy to use methods to manage and use credentials'
@@ -95,19 +95,20 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+        Tags = @('Credential', 'Credentials', 'Credential Manager', 'Credential File', 'Credential Files', 'PowerShell Credentials', 'Network Credentials', 'Credentials Cache')
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://github.com/echalone/TUN/blob/master/PowerShell/Modules/LICENSE'
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/echalone/TUN'
 
         # A URL to an icon representing this module.
-        # IconUri = ''
+        IconUri = 'https://github.com/echalone/TUN/blob/master/Media/Icons/ThingsUNeed.ico'
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'V 1.0.0: Initial version'
+        ReleaseNotes = 'V 1.0.0: Initial version
+V 1.0.1: Updated module information'
 
         # External dependent modules of this module
         # ExternalModuleDependencies = ''
