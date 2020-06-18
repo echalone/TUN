@@ -1,8 +1,10 @@
 ###
 # Name:             TUN.Credentials
 # Author:           Markus Szumovski
-# Creation Date:    2020-06-15
+# Creation Date:    2020-06-18
 # Purpose/Change:   Methods to easily manage and use credentials
+# This Source Code Form is subject to the terms of the Mozilla Public License, 
+# v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
 ###
 
 Set-StrictMode -Version Latest

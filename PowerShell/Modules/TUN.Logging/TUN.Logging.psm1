@@ -1,8 +1,10 @@
 ###
 # Name:             TUN.Logging
 # Author:           Markus Szumovski
-# Creation Date:    2020-06-15
+# Creation Date:    2020-06-18
 # Purpose/Change:   Logging in files and/or sending log by mail
+# This Source Code Form is subject to the terms of the Mozilla Public License, 
+# v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
 ###
 
 Set-StrictMode -Version Latest
