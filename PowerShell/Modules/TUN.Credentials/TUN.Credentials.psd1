@@ -12,7 +12,7 @@
 RootModule = 'TUN.Credentials.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.6'
+ModuleVersion = '1.0.7'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -104,7 +104,7 @@ PrivateData = @{
         ProjectUri = 'https://github.com/echalone/TUN'
 
         # A URL to an icon representing this module.
-        IconUri = 'https://github.com/echalone/TUN/blob/master/Media/Icons/ThingsUNeed.ico'
+        IconUri = 'https://raw.githubusercontent.com/echalone/TUN/master/Media/Icons/ThingsUNeed.ico'
 
         # ReleaseNotes of this module
         ReleaseNotes = 'V 1.0.0: Initial version
@@ -113,7 +113,8 @@ V 1.0.2: Fixed tags for PSGallery
 V 1.0.3: Added help markdown link
 V 1.0.4: Changed markdown link to raw
 V 1.0.5: Changed markdown link back to non-raw
-V 1.0.6: Moved markdown link from HelpInfoUri to description'
+V 1.0.6: Moved markdown link from HelpInfoUri to description
+V 1.0.7: Fixed icon link'
 
         # Prerelease string of this module
         # Prerelease = ''

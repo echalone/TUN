@@ -12,7 +12,7 @@
 RootModule = 'TUN.Logging.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.2'
+ModuleVersion = '1.0.4'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -51,7 +51,7 @@ Description = 'Provides easy to use file and mail logging. Documentation of modu
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-RequiredModules = @(@{ModuleName = 'TUN.Credentials'; ModuleVersion = '1.0.6'; })
+RequiredModules = @(@{ModuleName = 'TUN.Credentials'; ModuleVersion = '1.0.7'; })
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
@@ -112,12 +112,14 @@ PrivateData = @{
         ProjectUri = 'https://github.com/echalone/TUN'
 
         # A URL to an icon representing this module.
-        IconUri = 'https://github.com/echalone/TUN/blob/master/Media/Icons/ThingsUNeed.ico'
+        IconUri = 'https://raw.githubusercontent.com/echalone/TUN/master/Media/Icons/ThingsUNeed.ico'
 
         # ReleaseNotes of this module
         ReleaseNotes = 'V 1.0.0: Initial version
 V 1.0.1: Updated module information
-V 1.0.2: Moved markdown link from HelpInfoUri to description'
+V 1.0.2: Moved markdown link from HelpInfoUri to description
+V 1.0.3: Fixed icon link
+V 1.0.4: Bumped required module version'
 
         # Prerelease string of this module
         # Prerelease = ''
