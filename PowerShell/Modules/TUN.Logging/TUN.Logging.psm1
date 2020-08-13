@@ -63,6 +63,7 @@ $script:ScriptInfo_Path = $null                                 # The path to th
 $script:ScriptInfo_File = $null                                 # The filename of the executing main scriptfile
 $script:ScriptInfo_Name = $null                                 # The filename without extension of the executing main scriptfile
 $script:ScriptInfo_Version = $null                              # The version of the executing main scriptfile
+$script:ScriptInfo_CurrentUser = $null                          # The user context at the start of logging
 
 function Coalesce
 {
@@ -180,6 +181,8 @@ function RetrieveScriptInfo {
 #>
 
     if(!$script:ScriptInfo_Retrieved) {
+        $script:ScriptInfo_CurrentUser = $Env:UserDomain + "\" + $Env:UserName
+
         $arr = @(Get-PSCallStack) 
 
         $frmScript = $arr | Where-Object { ($null -ne $_) -and ($null -ne $_.InvocationInfo) `
@@ -188,15 +191,24 @@ function RetrieveScriptInfo {
                                 | Select-Object -Last 1 | Select-Object -ExpandProperty InvocationInfo
 
         if($null -ne $frmScript) {
-            $script:ScriptInfo_File = Coalesce -IfNull (Coalesce -IfNull ($frmScript.MyCommand.Name) -InsteadOfNull ([System.IO.Path]::GetFileName($frmScript.MyCommand.Path))) -InsteadOfNull "unknown"
-            $script:ScriptInfo_Name = Coalesce -IfNull ([System.IO.Path]::GetFileNameWithoutExtension($script:ScriptInfo_File)) -InsteadOfNull "unknown"
-            $script:ScriptInfo_Path = Coalesce -IfNull (Coalesce -IfNull ($frmScript.MyCommand.Path) -InsteadOfNull ($script:ScriptInfo_Name)) -InsteadOfNull "unknown"
-            $script:ScriptInfo_Call = Coalesce -IfNull ($frmScript.Line) -InsteadOfNull "unknown"
-            if([bool]($frmScript.MyCommand.PSobject.Properties.name) -match "Version") {
-                $script:ScriptInfo_Version = $frmScript.MyCommand.Version
+            if($frmScript.MyCommand.Source -eq "TUN.Logging" -and $frmScript.MyCommand.ModuleName -eq "TUN.Logging") {
+                $script:ScriptInfo_File = "console"
+                $script:ScriptInfo_Name = "console"
+                $script:ScriptInfo_Path = "console"
+                $script:ScriptInfo_Call = $frmScript.MyCommand.Name
+                $script:ScriptInfo_Version = $null
             }
             else {
-                $script:ScriptInfo_Version = $null
+                $script:ScriptInfo_File = Coalesce -IfNull (Coalesce -IfNull ($frmScript.MyCommand.Name) -InsteadOfNull ([System.IO.Path]::GetFileName($frmScript.MyCommand.Path))) -InsteadOfNull "unknown"
+                $script:ScriptInfo_Name = Coalesce -IfNull ([System.IO.Path]::GetFileNameWithoutExtension($script:ScriptInfo_File)) -InsteadOfNull "unknown"
+                $script:ScriptInfo_Path = Coalesce -IfNull (Coalesce -IfNull ($frmScript.MyCommand.Path) -InsteadOfNull ($script:ScriptInfo_Name)) -InsteadOfNull "unknown"
+                $script:ScriptInfo_Call = Coalesce -IfNull ($frmScript.Line) -InsteadOfNull "unknown"
+                if([bool]($frmScript.MyCommand.PSobject.Properties.name) -match "Version") {
+                    $script:ScriptInfo_Version = $frmScript.MyCommand.Version
+                }
+                else {
+                    $script:ScriptInfo_Version = $null
+                }
             }
         }
         else {
@@ -205,32 +217,62 @@ function RetrieveScriptInfo {
             $frmScript = $arr | Where-Object { ($null -ne $_) -and ($null -ne $_.InvocationInfo) `
                                         -and ($null -ne $_.InvocationInfo.MyCommand) `
                                         -and ($_.InvocationInfo.MyCommand.CommandType -eq [System.Management.Automation.CommandTypes]::Function) } `
-                                | Select-Object -Last 1 | Select-Object -ExpandProperty InvocationInfo | Select-Object -ExpandProperty MyCommand
-
+                                | Select-Object -Last 1 | Select-Object -ExpandProperty InvocationInfo
 
             if($null -ne $frmScript) {
                 # we found function info
-                $script:ScriptInfo_Name = Coalesce -IfNull (Coalesce -IfNull ($frmScript.Name) -InsteadOfNull ([System.IO.Path]::GetFileNameWithoutExtension($frmScript.ScriptBlock.File))) -InsteadOfNull "unknown"
-                $script:ScriptInfo_File = Coalesce -IfNull (Coalesce -IfNull ($frmScript.ScriptBlock.File) -InsteadOfNull ($script:ScriptInfo_Name)) -InsteadOfNull "unknown"
-                $script:ScriptInfo_Path = Coalesce -IfNull (Coalesce -IfNull ($frmScript.ScriptBlock.File) -InsteadOfNull ($script:ScriptInfo_Name)) -InsteadOfNull "unknown"
-                $script:ScriptInfo_Call = Coalesce -IfNull ($frmScript.Line) -InsteadOfNull "unknown"
-                $script:ScriptInfo_Version = $null
+
+                if($frmScript.MyCommand.Source -eq "TUN.Logging" -and $frmScript.MyCommand.ModuleName -eq "TUN.Logging") {
+                    $script:ScriptInfo_File = "console"
+                    $script:ScriptInfo_Name = "console"
+                    $script:ScriptInfo_Path = "console"
+                    $script:ScriptInfo_Call = $frmScript.MyCommand.Name
+                    $script:ScriptInfo_Version = $null
+                }
+                else {
+                    $script:ScriptInfo_Name = Coalesce -IfNull (Coalesce -IfNull ($frmScript.MyCommand.Name) -InsteadOfNull ([System.IO.Path]::GetFileNameWithoutExtension($frmScript.MyCommand.ScriptBlock.File))) -InsteadOfNull "unknown"
+                    $script:ScriptInfo_File = Coalesce -IfNull (Coalesce -IfNull ($frmScript.MyCommand.ScriptBlock.File) -InsteadOfNull ($script:ScriptInfo_Name)) -InsteadOfNull "unknown"
+                    $script:ScriptInfo_Path = Coalesce -IfNull (Coalesce -IfNull ($frmScript.MyCommand.ScriptBlock.File) -InsteadOfNull ($script:ScriptInfo_Name)) -InsteadOfNull "unknown"
+                    $script:ScriptInfo_Call = Coalesce -IfNull ($frmScript.Line) -InsteadOfNull "unknown"
+
+                    if([bool]($frmScript.MyCommand.PSobject.Properties.name) -match "Version") {
+                        $script:ScriptInfo_Version = $frmScript.MyCommand.Version
+                    }
+                    else {
+                        $script:ScriptInfo_Version = $null
+                    }
+                }
             }
             else {
                 # no function found, try script (script block)
                 $frmScript = $arr | Where-Object { ($null -ne $_) -and ($null -ne $_.InvocationInfo) `
                                         -and ($null -ne $_.InvocationInfo.MyCommand) `
                                         -and ($_.InvocationInfo.MyCommand.CommandType -eq [System.Management.Automation.CommandTypes]::Script) } `
-                                | Select-Object -Last 1 | Select-Object -ExpandProperty InvocationInfo | Select-Object -ExpandProperty MyCommand
+                                | Select-Object -Last 1 | Select-Object -ExpandProperty InvocationInfo
 
                 if($null -ne $frmScript) {
 
                     # we found script (script block) info
-                    $script:ScriptInfo_Name = Coalesce -IfNull ($frmScript.MyCommand.Definition) -InsteadOfNull "unknown"
-                    $script:ScriptInfo_File = Coalesce -IfNull ($frmScript.MyCommand.Definition) -InsteadOfNull "unknown"
-                    $script:ScriptInfo_Path = Coalesce -IfNull ($frmScript.MyCommand.Definition) -InsteadOfNull "unknown"
-                    $script:ScriptInfo_Call = Coalesce -IfNull ($frmScript.MyCommand.Definition) -InsteadOfNull "unknown"
-                    $script:ScriptInfo_Version = $null
+                    if($frmScript.MyCommand.Source -eq "TUN.Logging" -and $frmScript.MyCommand.ModuleName -eq "TUN.Logging") {
+                        $script:ScriptInfo_File = "console"
+                        $script:ScriptInfo_Name = "console"
+                        $script:ScriptInfo_Path = "console"
+                        $script:ScriptInfo_Call = $frmScript.MyCommand.Name
+                        $script:ScriptInfo_Version = $null
+                    }
+                    else {
+                        $script:ScriptInfo_Name = Coalesce -IfNull ($frmScript.MyCommand.Definition) -InsteadOfNull "unknown"
+                        $script:ScriptInfo_File = Coalesce -IfNull ($frmScript.MyCommand.Definition) -InsteadOfNull "unknown"
+                        $script:ScriptInfo_Path = Coalesce -IfNull ($frmScript.MyCommand.Definition) -InsteadOfNull "unknown"
+                        $script:ScriptInfo_Call = Coalesce -IfNull ($frmScript.MyCommand.Definition) -InsteadOfNull "unknown"
+
+                        if([bool]($frmScript.MyCommand.PSobject.Properties.name) -match "Version") {
+                            $script:ScriptInfo_Version = $frmScript.MyCommand.Version
+                        }
+                        else {
+                            $script:ScriptInfo_Version = $null
+                        }
+                    }
                 }
                 else {
                     # we found nada
@@ -305,6 +347,18 @@ function Get-ScriptVersion {
 
     RetrieveScriptInfo
     return $script:ScriptInfo_Version
+}
+
+function Get-ScriptUser {
+<#
+    .SYNOPSIS
+        Retrieves the user context (if this hasn't happened yet) and returns it
+    .OUTPUTS
+        Path of executing main script
+#>
+
+    RetrieveScriptInfo
+    return $script:ScriptInfo_CurrentUser
 }
 
 function Test-VerboseOutput {
@@ -826,6 +880,7 @@ function Start-MailLog {
     Write-MailLog -Message "***************************************************************************************************"
     Write-MailLog -Message "`tPowerShell Version $($PSVersionTable.PSVersion.ToString())"
     Write-MailLog -Message "`tLogging by module $($MyInvocation.MyCommand.Module.Name) Version $($MyInvocation.MyCommand.Module.Version)"
+    Write-MailLog -Message "`tUser at start of logging: ""$(Get-ScriptUser)"""
     Write-MailLog -Message "`tStarted script ""$(Get-ScriptPath)"""
     Write-MailLog -Message "`tCalling command ""$(Get-ScriptCall)"""
     
@@ -1245,6 +1300,7 @@ function Start-Log {
         Add-Content -Path $script:LogFile -Value "***************************************************************************************************"
         Add-Content -Path $script:LogFile -Value "`tPowerShell Version $($PSVersionTable.PSVersion.ToString())"
         Add-Content -Path $script:LogFile -Value "`tLogging by module $($MyInvocation.MyCommand.Module.Name) Version $($MyInvocation.MyCommand.Module.Version)"
+        Add-Content -Path $script:LogFile -Value "`tUser at start of logging: ""$(Get-ScriptUser)"""
         Add-Content -Path $script:LogFile -Value "`tStarted script ""$(Get-ScriptPath)"""
         Add-Content -Path $script:LogFile -Value "`tCalling command ""$(Get-ScriptCall)"""
         if(Get-ScriptVersion) {
@@ -1565,6 +1621,8 @@ function Write-ErrorLog {
         [switch] $ForceMail
     )
 
+    $Exception = $null
+
     #if no error or message was passed, use the last error
     if(!$Message -and !$Err) {
         if($Error -and $Error.Count -gt 0) {
@@ -1576,7 +1634,9 @@ function Write-ErrorLog {
     }
     
     #now let's build ourself a nice error message
-    $Exception = $Err.Exception
+    if($Err) {
+        $Exception = $Err.Exception
+    }
     $strErrorMessage = ""
 
     if($Err -and $Err.InvocationInfo -and !$NoErrorDetails.IsPresent) {
