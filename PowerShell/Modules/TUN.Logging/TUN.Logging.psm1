@@ -320,7 +320,7 @@ function Get-ConsoleForegroundColor {
 
     try {
         $Color = $Host.UI.RawUI.ForegroundColor
-        if([System.Enum]::IsDefined([System.Console] , $Color)) {
+        if([System.Enum]::IsDefined([System.ConsoleColor] , $Color)) {
             [ConsoleColor] $RetVal = [ConsoleColor]$Color
 
             return [ConsoleColor] $RetVal
@@ -346,7 +346,7 @@ function Get-ConsoleBackgroundColor {
 
     try {
         $Color = $Host.UI.RawUI.BackgroundColor
-        if([System.Enum]::IsDefined([System.Console] , $Color)) {
+        if([System.Enum]::IsDefined([System.ConsoleColor] , $Color)) {
             [ConsoleColor] $RetVal = [ConsoleColor]$Color
 
             return [ConsoleColor] $RetVal

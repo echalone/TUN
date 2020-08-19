@@ -12,7 +12,7 @@
 RootModule = 'TUN.Logging.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1.0'
+ModuleVersion = '1.1.1'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -122,7 +122,8 @@ V 1.0.2: Moved markdown link from HelpInfoUri to description
 V 1.0.3: Fixed icon link
 V 1.0.4: Bumped required module version
 V 1.0.5: Bugfixes for logging from console or function, added logging of user
-V 1.1.0: Bugfixes for Linux, now compatible with Linux Powershell Core'
+V 1.1.0: Bugfixes for Linux, now compatible with Linux Powershell Core
+V 1.1.1: Bugfixing fallback color'
 
         # Prerelease string of this module
         # Prerelease = ''
