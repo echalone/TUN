@@ -60,6 +60,68 @@ function Get-CredentialInternal {
     return $Credential
 }
 
+function Get-PSCredential {
+    <#
+        .SYNOPSIS
+            Gets PS credentials from a cache or user name/password combination (in that order) and save it to the cache.
+            If cache will be used to store the credentials can be configured.
+        .PARAMETER Name
+            Unique cache name for the credentials.
+            If no cache name is provided, the credentials will not be cached.
+        .PARAMETER UserName
+            Username for credentials.
+            This parameter is mandatory.
+        .PARAMETER Password
+            The password for credentials.
+        .PARAMETER Init
+            True/Present...If the Name parameter was provided:
+                            Will clear the cache of these credentials and ask for a user input of credentials.
+        .PARAMETER NoOutput
+            True/Present...Will not display any messages to the host (except if canceling execution due to Init switch being present)
+        .OUTPUTS
+            Retrieved PSCredential object or null
+    #>
+
+    [CmdletBinding()]
+    PARAM (
+        [Parameter(Position=0)]
+        [string] $Name = $null,
+        [Parameter(Position=1, Mandatory=$true)]
+        [string] $UserName,
+        [Parameter(Position=2)]
+        [SecureString] $Password,
+        [Parameter(Position=3)]
+        [switch] $Init,
+        [Parameter(Position=4)]
+        [switch] $NoOutput
+    )
+
+    [PSCredential] $Credential = $null
+
+    if($Name -and $script:CachedCredentials.ContainsKey($Name)) {
+        If($Init.IsPresent) {
+            Clear-CredentialCache -Name $Name -NoOutput:$NoOutput
+        }
+        else {
+            $Credential = $script:CachedCredentials[$Name]
+        }
+    }
+
+    #check for credential file
+    if(!$Credential) {
+        $Credential = New-Object -TypeName PSCredential -ArgumentList $UserName, $Password
+    }
+        
+    #check if we should cache if it's not yet cached
+    If($Name -and !$script:CachedCredentials.ContainsKey($Name)) {
+        if($Credential) {
+            $script:CachedCredentials[$Name] = $Credential
+        }
+    }
+
+    return $Credential
+}
+
 function Use-PSCredential {
     <#
         .SYNOPSIS
@@ -191,6 +253,52 @@ function Use-PSCredential {
     }
 
     return $Credential
+}
+
+function Get-NetworkCredential {
+    <#
+        .SYNOPSIS
+            Gets network credentials from a cache or user name/password combination (in that order) and save it to the cache.
+            If cache will be used to store the credentials can be configured.
+        .PARAMETER Name
+            Unique cache name for the credentials.
+            If no cache name is provided, the credentials will not be cached.
+        .PARAMETER UserName
+            Username for credentials.
+            This parameter is mandatory.
+        .PARAMETER Password
+            The password for credentials.
+        .PARAMETER Init
+            True/Present...If the Name parameter was provided:
+                            Will clear the cache of these credentials and ask for a user input of credentials.
+        .PARAMETER NoOutput
+            True/Present...Will not display any messages to the host (except if canceling execution due to Init switch being present)
+        .OUTPUTS
+            Retrieved PSCredential object or null
+    #>
+
+    [CmdletBinding()]
+    PARAM (
+        [Parameter(Position=0)]
+        [string] $Name = $null,
+        [Parameter(Position=1, Mandatory=$true)]
+        [string] $UserName,
+        [Parameter(Position=2)]
+        [SecureString] $Password,
+        [Parameter(Position=3)]
+        [switch] $Init,
+        [Parameter(Position=4)]
+        [switch] $NoOutput
+    )
+
+    $PSCredential = Get-PSCredential -Name $Name -UserName $UserName -Password $Password -Init:$Init -NoOutput:$NoOutput
+
+    if($PSCredential) {
+        return [System.Net.NetworkCredential] $PSCredential
+    }
+    else {
+        return $null
+    }
 }
 
 function Use-NetworkCredential {
