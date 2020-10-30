@@ -21,6 +21,10 @@ $script:LogMailRunning = $false                                 # Is logging to 
 $script:LogPreference_NoTimestamp = $false                      # Should timestamps for the log-file be omitted?
 $script:LogPreference_AsOutput = $false                         # Should the log file contain whatever the output contains (or everything=$false)?
 $script:LogPreference_MailAsOutput = $false                     # Should the mail log contain whatever the output contains (or everything=$false)?
+$script:LogPreference_FallbackForegroundColor = `               # Fallback color for foreground color if it is not possible to retrieve the information from the console
+                                    [ConsoleColor]::Gray
+$script:LogPreference_FallbackBackgroundColor = `               # Fallback color for background color if it is not possible to retrieve the information from the console
+                                    [ConsoleColor]::Black
 
 [Nullable[bool]] $script:LogPreference_MailError = $null        # Should errors be sent in the log mail? ($null...either always or as output if -AsOutput switch is set)
 [Nullable[bool]] $script:LogPreference_MailHost = $null         # Should host messages be sent in the log mail? ($null...either always or as output if -AsOutput switch is set)
@@ -64,6 +68,7 @@ $script:ScriptInfo_File = $null                                 # The filename o
 $script:ScriptInfo_Name = $null                                 # The filename without extension of the executing main scriptfile
 $script:ScriptInfo_Version = $null                              # The version of the executing main scriptfile
 $script:ScriptInfo_CurrentUser = $null                          # The user context at the start of logging
+$script:ScriptInfo_ComputerName = $null                         # The machine name at the start of logging
 
 function Coalesce
 {
@@ -181,7 +186,21 @@ function RetrieveScriptInfo {
 #>
 
     if(!$script:ScriptInfo_Retrieved) {
-        $script:ScriptInfo_CurrentUser = $Env:UserDomain + "\" + $Env:UserName
+        $script:ScriptInfo_ComputerName = Coalesce -IfNull $Env:COMPUTERNAME -InsteadOfNull $Env:NAME
+        if([string]::IsNullOrWhiteSpace($script:ScriptInfo_ComputerName)) {
+            $script:ScriptInfo_ComputerName = "local"
+        }
+        
+        $UserName = Coalesce -IfNull $Env:UserName -InsteadOfNull $Env:USER
+
+        if($UserName) {
+            if($Env:UserDomain) {
+                $script:ScriptInfo_CurrentUser = $Env:UserDomain + "\" + $UserName
+            }
+            else {
+                $script:ScriptInfo_CurrentUser = $UserName
+            }    
+        }
 
         $arr = @(Get-PSCallStack) 
 
@@ -289,6 +308,58 @@ function RetrieveScriptInfo {
     }
 }
 
+function Get-ConsoleForegroundColor {
+<#
+    .SYNOPSIS
+        Gets current console foreground color,
+        or its fallback color if the console
+        color could not be determined
+    .OUTPUTS
+        Foreground color for console as type [ConsoleColor]
+#>
+
+    try {
+        $Color = $Host.UI.RawUI.ForegroundColor
+        if([System.Enum]::IsDefined([System.ConsoleColor] , $Color)) {
+            [ConsoleColor] $RetVal = [ConsoleColor]$Color
+
+            return [ConsoleColor] $RetVal
+        }
+        else {
+            return [ConsoleColor] $script:LogPreference_FallbackForegroundColor
+        }
+    }
+    catch {
+        return [ConsoleColor] $script:LogPreference_FallbackForegroundColor
+    }
+}
+
+function Get-ConsoleBackgroundColor {
+<#
+    .SYNOPSIS
+        Gets current console background color,
+        or its fallback color if the console
+        color could not be determined
+    .OUTPUTS
+        Background color for console as type [ConsoleColor]
+#>
+
+    try {
+        $Color = $Host.UI.RawUI.BackgroundColor
+        if([System.Enum]::IsDefined([System.ConsoleColor] , $Color)) {
+            [ConsoleColor] $RetVal = [ConsoleColor]$Color
+
+            return [ConsoleColor] $RetVal
+        }
+        else {
+            return [ConsoleColor] $script:LogPreference_FallbackBackgroundColor
+        }
+    }
+    catch {
+        return [ConsoleColor] $script:LogPreference_FallbackBackgroundColor
+    }
+}
+
 function Get-ScriptPath {
 <#
     .SYNOPSIS
@@ -342,7 +413,7 @@ function Get-ScriptVersion {
     .SYNOPSIS
         Retrieves the version of the executing main script (if this hasn't happened yet) and returns it
     .OUTPUTS
-        Path of executing main script
+        Version of executing main script
 #>
 
     RetrieveScriptInfo
@@ -354,11 +425,55 @@ function Get-ScriptUser {
     .SYNOPSIS
         Retrieves the user context (if this hasn't happened yet) and returns it
     .OUTPUTS
-        Path of executing main script
+        Name of current user during log start
 #>
 
     RetrieveScriptInfo
     return $script:ScriptInfo_CurrentUser
+}
+
+function Get-ScriptMachine {
+<#
+    .SYNOPSIS
+        Retrieves the machine name (if this hasn't happened yet) and returns it
+    .OUTPUTS
+        Machine name during log start
+#>
+
+    RetrieveScriptInfo
+    return $script:ScriptInfo_ComputerName
+}
+
+function Get-TUNLoggingVersion {
+<#
+    .SYNOPSIS
+        Returns version of current TUN.Logging module
+    .PARAMETER AsString
+        True/Present...will return a version string
+        False/Absent...will return a version object
+    .OUTPUTS
+        Version of TUN.Logging module
+#>
+
+    [CmdletBinding()]
+    PARAM (
+        [Parameter(Position=0)]
+        [switch] $AsString
+    )
+
+    $Version = $MyInvocation.MyCommand.Module.Version
+
+    if($null -ne $Version) {
+        if($AsString.IsPresent) {
+            return $Version.ToString()
+        }
+        else {
+            return $Version
+        }    
+    }
+    else {
+        return $null
+    }
 }
 
 function Test-VerboseOutput {
@@ -811,6 +926,12 @@ function Start-MailLog {
         null or not specified...The adding of information messages depends on the AsOutput switch. If the AsOutput switch is present,
                 then information messages will only be added if they are displayed, if the AsOutput switch is absent, they will
                 always be added.
+    .PARAMETER LogPreference_FallbackForegroundColor
+        The fallback foreground color for the console if none was provided and the current foreground color could not be determined from the console.
+        The default is Gray.
+    .PARAMETER LogPreference_FallbackBackgroundColor
+        The fallback background color for the console if none was provided and the current background color could not be determined from the console.
+        The default is Black.
     .PARAMETER AsOutput
         True/Present...For all message types for which no LogPreference was set (or for which the LogPreference is null) the 
                         message will only be added if it is displayed to the user (or would be displayed to the user if
@@ -849,6 +970,10 @@ function Start-MailLog {
         [Nullable[bool]] $LogPreference_MailDebug,
         [Parameter(Position=7)]
         [Nullable[bool]] $LogPreference_MailInformation,
+        [Parameter(Position=8)]
+        [ConsoleColor] $LogPreference_FallbackForegroundColor = [ConsoleColor]::Gray,
+        [Parameter(Position=9)]
+        [ConsoleColor] $LogPreference_FallbackBackgroundColor = [ConsoleColor]::Black,
         [switch] $AsOutput,
         [switch] $InitCredentials,
         [switch] $Force
@@ -872,15 +997,21 @@ function Start-MailLog {
     $script:LogPreference_MailWarning = $LogPreference_MailWarning
     $script:LogPreference_MailDebug = $LogPreference_MailDebug
     $script:LogPreference_MailInformation = $LogPreference_MailInformation
+    $script:LogPreference_FallbackForegroundColor = $LogPreference_FallbackForegroundColor
+    $script:LogPreference_FallbackBackgroundColor = $LogPreference_FallbackBackgroundColor
 
     $script:ForceLogSend = $false
     $script:ForceLogReason = ""
 
+    $UserName = Get-ScriptUser
+
     $UTCDateTime = (Get-Date).ToUniversalTime()
     Write-MailLog -Message "***************************************************************************************************"
     Write-MailLog -Message "`tPowerShell Version $($PSVersionTable.PSVersion.ToString())"
-    Write-MailLog -Message "`tLogging by module $($MyInvocation.MyCommand.Module.Name) Version $($MyInvocation.MyCommand.Module.Version)"
-    Write-MailLog -Message "`tUser at start of logging: ""$(Get-ScriptUser)"""
+    Write-MailLog -Message "`tLogging by module $($MyInvocation.MyCommand.Module.Name) Version $((Get-TUNLoggingVersion -AsString))"
+    if($UserName) {
+        Write-MailLog -Message "`tUser at start of logging: ""$UserName"""
+    }
     Write-MailLog -Message "`tStarted script ""$(Get-ScriptPath)"""
     Write-MailLog -Message "`tCalling command ""$(Get-ScriptCall)"""
     
@@ -1003,7 +1134,7 @@ function Send-Log {
                 if(!$Subject) {
                     $Subject = $("Notification from `$(COMPUTERNAME)/`$(SCRIPTNAME)")
                 }
-                $Subject = $Subject.Replace("`$(COMPUTERNAME)", $env:COMPUTERNAME).Replace("`$(SCRIPTNAME)", $(Get-ScriptName))
+                $Subject = $Subject.Replace("`$(COMPUTERNAME)", (Get-ScriptMachine)).Replace("`$(SCRIPTNAME)", $(Get-ScriptName))
                 $Subject += ", Reason: $strSendReason"
 
                 $strTo = $To -Join ","
@@ -1176,6 +1307,12 @@ function Start-Log {
         null or not specified...The adding of information messages depends on the AsOutput switch. If the AsOutput switch is present,
                 then information messages will only be added if they are displayed, if the AsOutput switch is absent, they will
                 always be added.
+    .PARAMETER LogPreference_FallbackForegroundColor
+        The fallback foreground color for the console if none was provided and the current foreground color could not be determined from the console.
+        The default is Gray.
+    .PARAMETER LogPreference_FallbackBackgroundColor
+        The fallback background color for the console if none was provided and the current background color could not be determined from the console.
+        The default is Black.
     .PARAMETER NoTimestamp
         True/Present...Will not automatically add a timestamp to the beginning of each line in the log file.
                         If this switch is set, use the -AddTimestamp switch on individual log calls to add a timestamp if needed.
@@ -1226,6 +1363,10 @@ function Start-Log {
         [Nullable[bool]] $LogPreference_LogDebug,
         [Parameter(Position=9)]
         [Nullable[bool]] $LogPreference_LogInformation,
+        [Parameter(Position=10)]
+        [ConsoleColor] $LogPreference_FallbackForegroundColor = [ConsoleColor]::Gray,
+        [Parameter(Position=11)]
+        [ConsoleColor] $LogPreference_FallbackBackgroundColor = [ConsoleColor]::Black,
         [switch] $NoTimestamp,
         [switch] $UseComputerPrefix,
         [switch] $UseScriptPrefix,
@@ -1250,7 +1391,7 @@ function Start-Log {
         $LogName = "yyyy-MM-dd\THHmmss"
     }
 
-    $LogPath = $LogPath.Replace("`$(COMPUTERNAME)", $env:COMPUTERNAME).Replace("`$(SCRIPTNAME)", $(Get-ScriptName))
+    $LogPath = $LogPath.Replace("`$(COMPUTERNAME)", (Get-ScriptMachine)).Replace("`$(SCRIPTNAME)", $(Get-ScriptName))
 
     if($UseScriptPrefix.IsPresent -or $UseDefaultName.IsPresent) {
         $LogName =  "`$(SCRIPTNAME)_" + $LogName
@@ -1272,7 +1413,7 @@ function Start-Log {
     }
 
     #the datetime format function has removed all previously added escape backslashes from our variable names, so we can now replace the normal variable name with our values
-    $LogName = $LogName.Replace("`$(COMPUTERNAME)", $env:COMPUTERNAME).Replace("`$(SCRIPTNAME)", $(Get-ScriptName))
+    $LogName = $LogName.Replace("`$(COMPUTERNAME)", (Get-ScriptMachine)).Replace("`$(SCRIPTNAME)", $(Get-ScriptName))
 
     $LogName = $LogName + "." + $LogExtension
 
@@ -1294,13 +1435,17 @@ function Start-Log {
         Remove-Item -Path $script:LogFile -Force
     }
 
+    $UserName = Get-ScriptUser
+
     $script:WhatIfLog = !$PSCmdlet.ShouldProcess("$script:LogFile", "Logging")
 
     if(!$script:WhatIfLog -and $null -ne $script:LogFile) {
         Add-Content -Path $script:LogFile -Value "***************************************************************************************************"
         Add-Content -Path $script:LogFile -Value "`tPowerShell Version $($PSVersionTable.PSVersion.ToString())"
-        Add-Content -Path $script:LogFile -Value "`tLogging by module $($MyInvocation.MyCommand.Module.Name) Version $($MyInvocation.MyCommand.Module.Version)"
-        Add-Content -Path $script:LogFile -Value "`tUser at start of logging: ""$(Get-ScriptUser)"""
+        Add-Content -Path $script:LogFile -Value "`tLogging by module $($MyInvocation.MyCommand.Module.Name) Version $((Get-TUNLoggingVersion -AsString))"
+        if($UserName) {
+            Add-Content -Path $script:LogFile -Value "`tUser at start of logging: ""$UserName"""
+        }
         Add-Content -Path $script:LogFile -Value "`tStarted script ""$(Get-ScriptPath)"""
         Add-Content -Path $script:LogFile -Value "`tCalling command ""$(Get-ScriptCall)"""
         if(Get-ScriptVersion) {
@@ -1324,6 +1469,8 @@ function Start-Log {
     $script:LogPreference_LogWarning = $LogPreference_LogWarning
     $script:LogPreference_LogDebug = $LogPreference_LogDebug
     $script:LogPreference_LogInformation = $LogPreference_LogInformation
+    $script:LogPreference_FallbackForegroundColor = $LogPreference_FallbackForegroundColor
+    $script:LogPreference_FallbackBackgroundColor = $LogPreference_FallbackBackgroundColor
 
     $script:ErrorLogCount = 0
     $script:HostLogCount = 0
@@ -1710,8 +1857,8 @@ function Write-HostLog {
         [Parameter(Mandatory, ValueFromPipeline)]
         [object] $Message, 
         [switch] $NoNewline,
-        [ConsoleColor] $ForegroundColor = $host.UI.RawUI.ForegroundColor, 
-        [ConsoleColor] $BackgroundColor = $host.UI.RawUI.BackgroundColor,
+        [ConsoleColor] $ForegroundColor = (Get-ConsoleForegroundColor),
+        [ConsoleColor] $BackgroundColor = (Get-ConsoleBackgroundColor),
         [switch] $NoOut,
         [switch] $NoLog,
         [switch] $NoMail,
