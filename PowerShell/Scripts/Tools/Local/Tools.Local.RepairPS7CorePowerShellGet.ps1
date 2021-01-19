@@ -34,8 +34,13 @@ V 1.0.0: Initial version
 
 .SYNOPSIS
     Will fix the PowerShell 7 Core Module PowerShellGet Version 2.
+    Needs to be run with elevated/administrative privileges.
+    If not in elevated mode, the script will try to restart itself in elevated mode (for this, pwsh.exe needs to be found in the path environment variable).
 .DESCRIPTION 
     Will fix the PowerShell 7 Core Module PowerShellGet Version 2.
+    Needs to be run with elevated/administrative privileges.
+    If not in elevated mode, the script will try to restart itself in elevated mode (for this, pwsh.exe needs to be found in the path environment variable).
+    
     Currently PowerShell 7 Core is delivered with the PowerShellGet Module Version 2 while Version 3 is still under development.
     However, PowerShellGet Module Version 2 has a bug in PowerShell 7 that (it seems) will not be fixed by Microsoft.
     If you have installed a powershell script via Install-Script into the AllUsers scope and are then updating the script
@@ -177,11 +182,32 @@ function Write-ErrorExt {
 try {
     Write-Host "--- 'PowerShell 7 Core PowerShellGet Module' fixing script started ---`r`n`r`n" -ForegroundColor DarkGreen
 
+    Write-Host "Checking for elevated privileges..." -NoNewline
+    if(!([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+        Write-Host "insufficient" -ForegroundColor Yellow
+        Write-Host "Relaunching as elevated process..." -NoNewline
+        
+        # Relaunch as an elevated process:
+        $Parameters = @("-File",('"{0}"' -f $MyInvocation.MyCommand.Path))
+
+        # Set switches...
+        if(![string]::IsNullOrWhiteSpace($PowerShellCorePath)) { $Parameters += "-PowerShellCorePath"; $Parameters += $PowerShellCorePath }
+        if($NoConfirm.IsPresent) { $Parameters += "-NoConfirm" }
+
+        # Start new process...
+        Start-Process pwsh.exe $Parameters -Verb RunAs -ErrorAction Stop
+        Write-Host "done (exiting)"
+        exit
+    }
+    else {
+        Write-Host "sufficient" -ForegroundColor Green
+    }
+
     if([string]::IsNullOrWhiteSpace($PowerShellCorePath)) {
         Write-Host "Searching for PowerShell 7 Core..." -NoNewline
         $PSPath = $null
 
-        if(Test-Path -Path "$Env:ProgramFiles\PowerShell\7\pwsh.exe") {
+        if(Test-Path -Path "$Env:ProgramFiles\PowerShell\7\pwsh.exe" -ErrorAction Stop) {
             $PwshExePath = "$Env:ProgramFiles\PowerShell\7\pwsh.exe"
 
             if(Test-PSCoreVersion -PSPath $PwshExePath) {
@@ -189,7 +215,7 @@ try {
             }
         }
 
-        if($null -eq $PSPath -and (Test-Path -Path "${Env:ProgramFiles(x86)}\PowerShell\7\pwsh.exe")) {
+        if($null -eq $PSPath -and (Test-Path -Path "${Env:ProgramFiles(x86)}\PowerShell\7\pwsh.exe" -ErrorAction Stop)) {
             $PwshExePath = "${Env:ProgramFiles(x86)}\PowerShell\7\pwsh.exe"
 
             if(Test-PSCoreVersion -PSPath $PwshExePath) {
@@ -234,7 +260,7 @@ try {
 
         $PwshExePath = "$PowerShellCorePath\pwsh.exe"
 
-        if(Test-Path -Path $PwshExePath) {
+        if(Test-Path -Path $PwshExePath -ErrorAction Stop) {
             if(Test-PSCoreVersion -PSPath $PwshExePath) {
                 Write-Host "ok" -ForegroundColor Green
                 $PSPath = $PwshExePath
@@ -250,7 +276,7 @@ try {
     }
 
     if(![string]::IsNullOrWhiteSpace($PSPath)) {
-        $PSRoot = Split-Path -Path $PSPath -Parent
+        $PSRoot = Split-Path -Path $PSPath -Parent -ErrorAction Stop
         $PSGModuleFile = "$PSRoot\Modules\PowerShellGet\PSModule.psm1"
 
         Write-Host "Found PowerShell 7 Core at: ""$PSRoot"""
@@ -260,7 +286,7 @@ try {
             Write-Host "found" -ForegroundColor Green
 
             Write-Host "Reading in content of module file..." -NoNewline
-            $ModuleFileContent = Get-Content -Path $PSGModuleFile -Force -Raw
+            $ModuleFileContent = Get-Content -Path $PSGModuleFile -Force -Raw -ErrorAction Stop
             Write-Host "done" -ForegroundColor Green
 
             Write-Host "Checking for line to fix..." -NoNewline
@@ -317,6 +343,11 @@ catch {
 finally {
 
     Write-Host "`r`n`r`n--- 'PowerShell 7 Core PowerShellGet Module' fixing script ended ---" -ForegroundColor DarkGreen
+}
+
+if(!$NoConfirm.IsPresent) {
+    Write-Host "Press any key to close/end script..."
+    [System.Console]::ReadKey() | Out-Null
 }
 
 #and we're at the end
