@@ -1,321 +1,366 @@
+---
+Module Name: TUN.Logging
+Module Guid: eeac1534-25a5-4429-a073-17ec769525f5
+Module Version: 1.1.1
+Locale: en-US
+---
+
 # TUN.Logging Module
 
-## Content
-  * [Content](#content)
-  * [Description](#description)
-  * [License](#license)
-  * [How to use](#how-to-use)
-    + [Example](#example)
-      - [Example code](#example-code)
-      - [Example output](#example-output)
-  * [TUN.Logging Cmdlets](#tunlogging-cmdlets)
-    + [Get-HasLogDebug](#get-haslogdebug)
-      - [SYNOPSIS](#synopsis)
-      - [SYNTAX](#syntax)
-      - [OUTPUTS](#outputs)
-    + [Get-HasLogError](#get-haslogerror)
-      - [SYNOPSIS](#synopsis-1)
-      - [SYNTAX](#syntax-1)
-      - [OUTPUTS](#outputs-1)
-    + [Get-HasLogHost](#get-hasloghost)
-      - [SYNOPSIS](#synopsis-2)
-      - [SYNTAX](#syntax-2)
-      - [OUTPUTS](#outputs-2)
-    + [Get-HasLogInformation](#get-hasloginformation)
-      - [SYNOPSIS](#synopsis-3)
-      - [SYNTAX](#syntax-3)
-      - [OUTPUTS](#outputs-3)
-    + [Get-HasLogOutput](#get-haslogoutput)
-      - [SYNOPSIS](#synopsis-4)
-      - [SYNTAX](#syntax-4)
-      - [OUTPUTS](#outputs-4)
-    + [Get-HasLogVerbose](#get-haslogverbose)
-      - [SYNOPSIS](#synopsis-5)
-      - [SYNTAX](#syntax-5)
-      - [OUTPUTS](#outputs-5)
-    + [Get-HasLogWarning](#get-haslogwarning)
-      - [SYNOPSIS](#synopsis-6)
-      - [SYNTAX](#syntax-6)
-      - [OUTPUTS](#outputs-6)
-    + [Get-HasMailLogDebug](#get-hasmaillogdebug)
-      - [SYNOPSIS](#synopsis-7)
-      - [SYNTAX](#syntax-7)
-      - [EXAMPLES](#examples)
-        * [Example 1](#example-1)
-      - [OUTPUTS](#outputs-7)
-    + [Get-HasMailLogError](#get-hasmaillogerror)
-      - [SYNOPSIS](#synopsis-8)
-      - [SYNTAX](#syntax-8)
-      - [EXAMPLES](#examples-1)
-        * [Example 1](#example-1-1)
-      - [OUTPUTS](#outputs-8)
-    + [Get-HasMailLogHost](#get-hasmailloghost)
-      - [SYNOPSIS](#synopsis-9)
-      - [SYNTAX](#syntax-9)
-      - [EXAMPLES](#examples-2)
-        * [Example 1](#example-1-2)
-      - [OUTPUTS](#outputs-9)
-    + [Get-HasMailLogInformation](#get-hasmailloginformation)
-      - [SYNOPSIS](#synopsis-10)
-      - [SYNTAX](#syntax-10)
-      - [EXAMPLES](#examples-3)
-        * [Example 1](#example-1-3)
-      - [OUTPUTS](#outputs-10)
-    + [Get-HasMailLogOutput](#get-hasmaillogoutput)
-      - [SYNOPSIS](#synopsis-11)
-      - [SYNTAX](#syntax-11)
-      - [EXAMPLES](#examples-4)
-        * [Example 1](#example-1-4)
-      - [OUTPUTS](#outputs-11)
-    + [Get-HasMailLogVerbose](#get-hasmaillogverbose)
-      - [SYNOPSIS](#synopsis-12)
-      - [SYNTAX](#syntax-12)
-      - [EXAMPLES](#examples-5)
-        * [Example 1](#example-1-5)
-      - [OUTPUTS](#outputs-12)
-    + [Get-HasMailLogWarning](#get-hasmaillogwarning)
-      - [SYNOPSIS](#synopsis-13)
-      - [SYNTAX](#syntax-13)
-      - [EXAMPLES](#examples-6)
-        * [Example 1](#example-1-6)
-      - [OUTPUTS](#outputs-13)
-    + [Send-Log](#send-log)
-      - [SYNOPSIS](#synopsis-14)
-      - [SYNTAX](#syntax-14)
-      - [EXAMPLES](#examples-7)
-        * [Example 1](#example-1-7)
-      - [PARAMETERS](#parameters)
-        * [-From](#-from)
-        * [-To](#-to)
-        * [-SmtpServer](#-smtpserver)
-        * [-Subject](#-subject)
-        * [-UseSsl](#-usessl)
-        * [-AlwaysSend](#-alwayssend)
-        * [-SendOnError](#-sendonerror)
-        * [-SendOnHost](#-sendonhost)
-        * [-SendOnOutput](#-sendonoutput)
-        * [-SendOnVerbose](#-sendonverbose)
-        * [-SendOnWarning](#-sendonwarning)
-        * [-SendOnDebug](#-sendondebug)
-        * [-SendOnInformation](#-sendoninformation)
-        * [-AttachLogfile](#-attachlogfile)
-        * [-WhatIf](#-whatif)
-        * [-Confirm](#-confirm)
-        * [CommonParameters](#commonparameters)
-      - [OUTPUTS](#outputs-14)
-      - [NOTES](#notes)
-    + [Set-ForceLogSend](#set-forcelogsend)
-      - [SYNOPSIS](#synopsis-15)
-      - [SYNTAX](#syntax-15)
-      - [EXAMPLES](#examples-8)
-        * [Example 1](#example-1-8)
-      - [PARAMETERS](#parameters-1)
-        * [-Reason](#-reason)
-        * [CommonParameters](#commonparameters-1)
-      - [OUTPUTS](#outputs-15)
-    + [Start-Log](#start-log)
-      - [SYNOPSIS](#synopsis-16)
-      - [SYNTAX](#syntax-16)
-      - [DESCRIPTION](#description)
-      - [EXAMPLES](#examples-9)
-        * [Example 1](#example-1-9)
-      - [PARAMETERS](#parameters-2)
-        * [-LogPath](#-logpath)
-        * [-LogName](#-logname)
-        * [-LogExtension](#-logextension)
-        * [-LogPreference_LogError](#-logpreference_logerror)
-        * [-LogPreference_LogHost](#-logpreference_loghost)
-        * [-LogPreference_LogOutput](#-logpreference_logoutput)
-        * [-LogPreference_LogVerbose](#-logpreference_logverbose)
-        * [-LogPreference_LogWarning](#-logpreference_logwarning)
-        * [-LogPreference_LogDebug](#-logpreference_logdebug)
-        * [-LogPreference_LogInformation](#-logpreference_loginformation)
-        * [-NoTimestamp](#-notimestamp)
-        * [-UseComputerPrefix](#-usecomputerprefix)
-        * [-UseScriptPrefix](#-usescriptprefix)
-        * [-UseDefaultName](#-usedefaultname)
-        * [-NoDateTimeFormat](#-nodatetimeformat)
-        * [-DeleteExisting](#-deleteexisting)
-        * [-AsOutput](#-asoutput)
-        * [-Force](#-force)
-        * [-WhatIf](#-whatif-1)
-        * [-Confirm](#-confirm-1)
-        * [CommonParameters](#commonparameters-2)
-      - [OUTPUTS](#outputs-16)
-    + [Start-MailLog](#start-maillog)
-      - [SYNOPSIS](#synopsis-17)
-      - [SYNTAX](#syntax-17)
-      - [DESCRIPTION](#description-1)
-      - [EXAMPLES](#examples-10)
-        * [Example 1](#example-1-10)
-        * [Example 2](#example-2)
-      - [PARAMETERS](#parameters-3)
-        * [-CredentialsFile](#-credentialsfile)
-        * [-LogPreference_MailError](#-logpreference_mailerror)
-        * [-LogPreference_MailHost](#-logpreference_mailhost)
-        * [-LogPreference_MailOutput](#-logpreference_mailoutput)
-        * [-LogPreference_MailVerbose](#-logpreference_mailverbose)
-        * [-LogPreference_MailWarning](#-logpreference_mailwarning)
-        * [-LogPreference_MailDebug](#-logpreference_maildebug)
-        * [-LogPreference_MailInformation](#-logpreference_mailinformation)
-        * [-AsOutput](#-asoutput-1)
-        * [-InitCredentials](#-initcredentials)
-        * [-Force](#-force-1)
-        * [-WhatIf](#-whatif-2)
-        * [-Confirm](#-confirm-2)
-        * [CommonParameters](#commonparameters-3)
-      - [OUTPUTS](#outputs-17)
-      - [NOTES](#notes-1)
-    + [Stop-Log](#stop-log)
-      - [SYNOPSIS](#synopsis-18)
-      - [SYNTAX](#syntax-18)
-      - [EXAMPLES](#examples-11)
-        * [Example 1](#example-1-11)
-      - [PARAMETERS](#parameters-4)
-        * [-WhatIf](#-whatif-3)
-        * [-Confirm](#-confirm-3)
-        * [CommonParameters](#commonparameters-4)
-      - [OUTPUTS](#outputs-18)
-      - [NOTES](#notes-2)
-    + [Write-DebugLog](#write-debuglog)
-      - [SYNOPSIS](#synopsis-19)
-      - [SYNTAX](#syntax-19)
-      - [EXAMPLES](#examples-12)
-        * [Example 1](#example-1-12)
-      - [PARAMETERS](#parameters-5)
-        * [-Message](#-message)
-        * [-NoOut](#-noout)
-        * [-NoLog](#-nolog)
-        * [-NoMail](#-nomail)
-        * [-AddTimestamp](#-addtimestamp)
-        * [-Force](#-force-2)
-        * [-ForceMail](#-forcemail)
-        * [-WhatIf](#-whatif-4)
-        * [-Confirm](#-confirm-4)
-        * [CommonParameters](#commonparameters-5)
-      - [OUTPUTS](#outputs-19)
-      - [NOTES](#notes-3)
-    + [Write-ErrorLog](#write-errorlog)
-      - [SYNOPSIS](#synopsis-20)
-      - [SYNTAX](#syntax-20)
-      - [EXAMPLES](#examples-13)
-        * [Example 1](#example-1-13)
-        * [Example 2](#example-2-1)
-      - [PARAMETERS](#parameters-6)
-        * [-Message](#-message-1)
-        * [-Category](#-category)
-        * [-Err](#-err)
-        * [-NoOut](#-noout-1)
-        * [-NoLog](#-nolog-1)
-        * [-NoMail](#-nomail-1)
-        * [-AddTimestamp](#-addtimestamp-1)
-        * [-NoErrorDetails](#-noerrordetails)
-        * [-Force](#-force-3)
-        * [-ForceMail](#-forcemail-1)
-        * [-WhatIf](#-whatif-5)
-        * [-Confirm](#-confirm-5)
-        * [CommonParameters](#commonparameters-6)
-      - [OUTPUTS](#outputs-20)
-      - [NOTES](#notes-4)
-    + [Write-HostLog](#write-hostlog)
-      - [SYNOPSIS](#synopsis-21)
-      - [SYNTAX](#syntax-21)
-      - [EXAMPLES](#examples-14)
-        * [Example 1](#example-1-14)
-      - [PARAMETERS](#parameters-7)
-        * [-Message](#-message-2)
-        * [-NoNewline](#-nonewline)
-        * [-ForegroundColor](#-foregroundcolor)
-        * [-BackgroundColor](#-backgroundcolor)
-        * [-NoOut](#-noout-2)
-        * [-NoLog](#-nolog-2)
-        * [-NoMail](#-nomail-2)
-        * [-AddTimestamp](#-addtimestamp-2)
-        * [-Force](#-force-4)
-        * [-ForceMail](#-forcemail-2)
-        * [-WhatIf](#-whatif-6)
-        * [-Confirm](#-confirm-6)
-        * [CommonParameters](#commonparameters-7)
-      - [OUTPUTS](#outputs-21)
-      - [NOTES](#notes-5)
-    + [Write-InformationLog](#write-informationlog)
-      - [SYNOPSIS](#synopsis-22)
-      - [SYNTAX](#syntax-22)
-      - [EXAMPLES](#examples-15)
-        * [Example 1](#example-1-15)
-      - [PARAMETERS](#parameters-8)
-        * [-Message](#-message-3)
-        * [-NoOut](#-noout-3)
-        * [-NoLog](#-nolog-3)
-        * [-NoMail](#-nomail-3)
-        * [-AddTimestamp](#-addtimestamp-3)
-        * [-Force](#-force-5)
-        * [-ForceMail](#-forcemail-3)
-        * [-WhatIf](#-whatif-7)
-        * [-Confirm](#-confirm-7)
-        * [CommonParameters](#commonparameters-8)
-      - [OUTPUTS](#outputs-22)
-      - [NOTES](#notes-6)
-    + [Write-OutputLog](#write-outputlog)
-      - [SYNOPSIS](#synopsis-23)
-      - [SYNTAX](#syntax-23)
-      - [EXAMPLES](#examples-16)
-        * [Example 1](#example-1-16)
-      - [PARAMETERS](#parameters-9)
-        * [-Message](#-message-4)
-        * [-NoOut](#-noout-4)
-        * [-NoLog](#-nolog-4)
-        * [-NoMail](#-nomail-4)
-        * [-AddTimestamp](#-addtimestamp-4)
-        * [-Force](#-force-6)
-        * [-ForceMail](#-forcemail-4)
-        * [-WhatIf](#-whatif-8)
-        * [-Confirm](#-confirm-8)
-        * [CommonParameters](#commonparameters-9)
-      - [OUTPUTS](#outputs-23)
-      - [NOTES](#notes-7)
-    + [Write-VerboseLog](#write-verboselog)
-      - [SYNOPSIS](#synopsis-24)
-      - [SYNTAX](#syntax-24)
-      - [EXAMPLES](#examples-17)
-        * [Example 1](#example-1-17)
-      - [PARAMETERS](#parameters-10)
-        * [-Message](#-message-5)
-        * [-NoOut](#-noout-5)
-        * [-NoLog](#-nolog-5)
-        * [-NoMail](#-nomail-5)
-        * [-AddTimestamp](#-addtimestamp-5)
-        * [-Force](#-force-7)
-        * [-ForceMail](#-forcemail-5)
-        * [-WhatIf](#-whatif-9)
-        * [-Confirm](#-confirm-9)
-        * [CommonParameters](#commonparameters-10)
-      - [OUTPUTS](#outputs-24)
-      - [NOTES](#notes-8)
-    + [Write-WarningLog](#write-warninglog)
-      - [SYNOPSIS](#synopsis-25)
-      - [SYNTAX](#syntax-25)
-      - [EXAMPLES](#examples-18)
-        * [Example 1](#example-1-18)
-      - [PARAMETERS](#parameters-11)
-        * [-Message](#-message-6)
-        * [-NoOut](#-noout-6)
-        * [-NoLog](#-nolog-6)
-        * [-NoMail](#-nomail-6)
-        * [-AddTimestamp](#-addtimestamp-6)
-        * [-Force](#-force-8)
-        * [-ForceMail](#-forcemail-6)
-        * [-WhatIf](#-whatif-10)
-        * [-Confirm](#-confirm-10)
-        * [CommonParameters](#commonparameters-11)
-      - [OUTPUTS](#outputs-25)
-      - [NOTES](#notes-9)
-
 ## Description
-Logging in files and/or sending log by mail
+Logging in files and/or sending log by mail.
+Provides easy to use file and mail logging. Documentation of module at https://github.com/echalone/TUN/blob/master/PowerShell/Modules/TUN.Logging/TUN.Logging.md
 
 ## License
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+
+## Module Metadata
+Module version: 1.1.1
+Module GUID: eeac1534-25a5-4429-a073-17ec769525f5
+Author: Markus Szumovski
+Company: ThingsUNeed
+Copyright: (c) 2020 - Markus Szumovski (ThingsUNeed)
+Tags: Core, Linux, Log-File, Log-Files, Log-Mail, Log-Mails, LogFile, LogFiles, Logging, LogMail, LogMails, Logs, Mailing, Mails, Powershell-Core, PowershellCore, PS3, PS4, PS5, PS6, PS7, Windows
+License Uri: https://github.com/echalone/TUN/blob/master/PowerShell/Modules/LICENSE
+Project Uri: https://github.com/echalone/TUN
+
+### Release Notes
+V 1.0.0: Initial version
+V 1.0.1: Updated module information
+V 1.0.2: Moved markdown link from HelpInfoUri to description
+V 1.0.3: Fixed icon link
+V 1.0.4: Bumped required module version
+V 1.0.5: Bugfixes for logging from console or function, added logging of user
+V 1.1.0: Bugfixes for Linux, now compatible with Linux Powershell Core
+V 1.1.1: Bugfixing fallback color
+
+### Required Modules
+* TUN.Credentials (1.1.0)
+
+## Content
+* [Description](#description)
+* [License](#license)
+* [Module Metadata](#module-metadata)
+  * [Release Notes](#release-notes)
+  * [Required Modules](#required-modules)
+* [Content](#content)
+* [How to use](#how-to-use)
+  * [Usage example](#usage-example)
+    * [Usage example code](#usage-example-code)
+    * [Usage example output](#usage-example-output)
+* [TUN.Logging Cmdlets](#tun.logging-cmdlets)
+  * [Get-HasLogDebug](#get-haslogdebug)
+    * [SYNOPSIS](#synopsis)
+    * [SYNTAX](#syntax)
+    * [OUTPUTS](#outputs)
+  * [Get-HasLogError](#get-haslogerror)
+    * [SYNOPSIS](#synopsis-1)
+    * [SYNTAX](#syntax-1)
+    * [OUTPUTS](#outputs-1)
+  * [Get-HasLogHost](#get-hasloghost)
+    * [SYNOPSIS](#synopsis-2)
+    * [SYNTAX](#syntax-2)
+    * [OUTPUTS](#outputs-2)
+  * [Get-HasLogInformation](#get-hasloginformation)
+    * [SYNOPSIS](#synopsis-3)
+    * [SYNTAX](#syntax-3)
+    * [OUTPUTS](#outputs-3)
+  * [Get-HasLogOutput](#get-haslogoutput)
+    * [SYNOPSIS](#synopsis-4)
+    * [SYNTAX](#syntax-4)
+    * [OUTPUTS](#outputs-4)
+  * [Get-HasLogVerbose](#get-haslogverbose)
+    * [SYNOPSIS](#synopsis-5)
+    * [SYNTAX](#syntax-5)
+    * [OUTPUTS](#outputs-5)
+  * [Get-HasLogWarning](#get-haslogwarning)
+    * [SYNOPSIS](#synopsis-6)
+    * [SYNTAX](#syntax-6)
+    * [OUTPUTS](#outputs-6)
+  * [Get-HasMailLogDebug](#get-hasmaillogdebug)
+    * [SYNOPSIS](#synopsis-7)
+    * [SYNTAX](#syntax-7)
+    * [EXAMPLES](#examples)
+      * [EXAMPLE 1](#example-1)
+    * [OUTPUTS](#outputs-7)
+  * [Get-HasMailLogError](#get-hasmaillogerror)
+    * [SYNOPSIS](#synopsis-8)
+    * [SYNTAX](#syntax-8)
+    * [EXAMPLES](#examples-1)
+      * [EXAMPLE 1](#example-1-1)
+    * [OUTPUTS](#outputs-8)
+  * [Get-HasMailLogHost](#get-hasmailloghost)
+    * [SYNOPSIS](#synopsis-9)
+    * [SYNTAX](#syntax-9)
+    * [EXAMPLES](#examples-2)
+      * [EXAMPLE 1](#example-1-2)
+    * [OUTPUTS](#outputs-9)
+  * [Get-HasMailLogInformation](#get-hasmailloginformation)
+    * [SYNOPSIS](#synopsis-10)
+    * [SYNTAX](#syntax-10)
+    * [EXAMPLES](#examples-3)
+      * [EXAMPLE 1](#example-1-3)
+    * [OUTPUTS](#outputs-10)
+  * [Get-HasMailLogOutput](#get-hasmaillogoutput)
+    * [SYNOPSIS](#synopsis-11)
+    * [SYNTAX](#syntax-11)
+    * [EXAMPLES](#examples-4)
+      * [EXAMPLE 1](#example-1-4)
+    * [OUTPUTS](#outputs-11)
+  * [Get-HasMailLogVerbose](#get-hasmaillogverbose)
+    * [SYNOPSIS](#synopsis-12)
+    * [SYNTAX](#syntax-12)
+    * [EXAMPLES](#examples-5)
+      * [EXAMPLE 1](#example-1-5)
+    * [OUTPUTS](#outputs-12)
+  * [Get-HasMailLogWarning](#get-hasmaillogwarning)
+    * [SYNOPSIS](#synopsis-13)
+    * [SYNTAX](#syntax-13)
+    * [EXAMPLES](#examples-6)
+      * [EXAMPLE 1](#example-1-6)
+    * [OUTPUTS](#outputs-13)
+  * [Get-TUNLoggingVersion](#get-tunloggingversion)
+    * [SYNOPSIS](#synopsis-14)
+    * [SYNTAX](#syntax-14)
+    * [PARAMETERS](#parameters)
+      * [-AsString](#-asstring)
+      * [CommonParameters](#commonparameters)
+    * [OUTPUTS](#outputs-14)
+  * [Send-Log](#send-log)
+    * [SYNOPSIS](#synopsis-15)
+    * [SYNTAX](#syntax-15)
+    * [EXAMPLES](#examples-7)
+      * [EXAMPLE 1](#example-1-7)
+    * [PARAMETERS](#parameters-1)
+      * [-From](#-from)
+      * [-To](#-to)
+      * [-SmtpServer](#-smtpserver)
+      * [-Subject](#-subject)
+      * [-UseSsl](#-usessl)
+      * [-AlwaysSend](#-alwayssend)
+      * [-SendOnError](#-sendonerror)
+      * [-SendOnHost](#-sendonhost)
+      * [-SendOnOutput](#-sendonoutput)
+      * [-SendOnVerbose](#-sendonverbose)
+      * [-SendOnWarning](#-sendonwarning)
+      * [-SendOnDebug](#-sendondebug)
+      * [-SendOnInformation](#-sendoninformation)
+      * [-AttachLogfile](#-attachlogfile)
+      * [-WhatIf](#-whatif)
+      * [-Confirm](#-confirm)
+      * [CommonParameters](#commonparameters-1)
+    * [OUTPUTS](#outputs-15)
+    * [NOTES](#notes)
+  * [Set-ForceLogSend](#set-forcelogsend)
+    * [SYNOPSIS](#synopsis-16)
+    * [SYNTAX](#syntax-16)
+    * [EXAMPLES](#examples-8)
+      * [EXAMPLE 1](#example-1-8)
+    * [PARAMETERS](#parameters-2)
+      * [-Reason](#-reason)
+      * [CommonParameters](#commonparameters-2)
+    * [OUTPUTS](#outputs-16)
+  * [Start-Log](#start-log)
+    * [SYNOPSIS](#synopsis-17)
+    * [SYNTAX](#syntax-17)
+    * [DESCRIPTION](#description-1)
+    * [EXAMPLES](#examples-9)
+      * [EXAMPLE 1](#example-1-9)
+    * [PARAMETERS](#parameters-3)
+      * [-LogPath](#-logpath)
+      * [-LogName](#-logname)
+      * [-LogExtension](#-logextension)
+      * [-LogPreference_LogError](#-logpreference_logerror)
+      * [-LogPreference_LogHost](#-logpreference_loghost)
+      * [-LogPreference_LogOutput](#-logpreference_logoutput)
+      * [-LogPreference_LogVerbose](#-logpreference_logverbose)
+      * [-LogPreference_LogWarning](#-logpreference_logwarning)
+      * [-LogPreference_LogDebug](#-logpreference_logdebug)
+      * [-LogPreference_LogInformation](#-logpreference_loginformation)
+      * [-LogPreference_FallbackForegroundColor](#-logpreference_fallbackforegroundcolor)
+      * [-LogPreference_FallbackBackgroundColor](#-logpreference_fallbackbackgroundcolor)
+      * [-NoTimestamp](#-notimestamp)
+      * [-UseComputerPrefix](#-usecomputerprefix)
+      * [-UseScriptPrefix](#-usescriptprefix)
+      * [-UseDefaultName](#-usedefaultname)
+      * [-NoDateTimeFormat](#-nodatetimeformat)
+      * [-DeleteExisting](#-deleteexisting)
+      * [-AsOutput](#-asoutput)
+      * [-Force](#-force)
+      * [-WhatIf](#-whatif-1)
+      * [-Confirm](#-confirm-1)
+      * [CommonParameters](#commonparameters-3)
+    * [OUTPUTS](#outputs-17)
+  * [Start-MailLog](#start-maillog)
+    * [SYNOPSIS](#synopsis-18)
+    * [SYNTAX](#syntax-18)
+    * [DESCRIPTION](#description-2)
+    * [EXAMPLES](#examples-10)
+      * [EXAMPLE 1](#example-1-10)
+      * [EXAMPLE 2](#example-2)
+    * [PARAMETERS](#parameters-4)
+      * [-CredentialsFile](#-credentialsfile)
+      * [-LogPreference_MailError](#-logpreference_mailerror)
+      * [-LogPreference_MailHost](#-logpreference_mailhost)
+      * [-LogPreference_MailOutput](#-logpreference_mailoutput)
+      * [-LogPreference_MailVerbose](#-logpreference_mailverbose)
+      * [-LogPreference_MailWarning](#-logpreference_mailwarning)
+      * [-LogPreference_MailDebug](#-logpreference_maildebug)
+      * [-LogPreference_MailInformation](#-logpreference_mailinformation)
+      * [-LogPreference_FallbackForegroundColor](#-logpreference_fallbackforegroundcolor-1)
+      * [-LogPreference_FallbackBackgroundColor](#-logpreference_fallbackbackgroundcolor-1)
+      * [-AsOutput](#-asoutput-1)
+      * [-InitCredentials](#-initcredentials)
+      * [-Force](#-force-1)
+      * [-WhatIf](#-whatif-2)
+      * [-Confirm](#-confirm-2)
+      * [CommonParameters](#commonparameters-4)
+    * [OUTPUTS](#outputs-18)
+    * [NOTES](#notes-1)
+  * [Stop-Log](#stop-log)
+    * [SYNOPSIS](#synopsis-19)
+    * [SYNTAX](#syntax-19)
+    * [EXAMPLES](#examples-11)
+      * [EXAMPLE 1](#example-1-11)
+    * [PARAMETERS](#parameters-5)
+      * [-WhatIf](#-whatif-3)
+      * [-Confirm](#-confirm-3)
+      * [CommonParameters](#commonparameters-5)
+    * [OUTPUTS](#outputs-19)
+    * [NOTES](#notes-2)
+  * [Write-DebugLog](#write-debuglog)
+    * [SYNOPSIS](#synopsis-20)
+    * [SYNTAX](#syntax-20)
+    * [EXAMPLES](#examples-12)
+      * [EXAMPLE 1](#example-1-12)
+    * [PARAMETERS](#parameters-6)
+      * [-Message](#-message)
+      * [-NoOut](#-noout)
+      * [-NoLog](#-nolog)
+      * [-NoMail](#-nomail)
+      * [-AddTimestamp](#-addtimestamp)
+      * [-Force](#-force-2)
+      * [-ForceMail](#-forcemail)
+      * [-WhatIf](#-whatif-4)
+      * [-Confirm](#-confirm-4)
+      * [CommonParameters](#commonparameters-6)
+    * [OUTPUTS](#outputs-20)
+    * [NOTES](#notes-3)
+  * [Write-ErrorLog](#write-errorlog)
+    * [SYNOPSIS](#synopsis-21)
+    * [SYNTAX](#syntax-21)
+    * [EXAMPLES](#examples-13)
+      * [EXAMPLE 1](#example-1-13)
+      * [EXAMPLE 2](#example-2-1)
+    * [PARAMETERS](#parameters-7)
+      * [-Message](#-message-1)
+      * [-Category](#-category)
+      * [-Err](#-err)
+      * [-NoOut](#-noout-1)
+      * [-NoLog](#-nolog-1)
+      * [-NoMail](#-nomail-1)
+      * [-AddTimestamp](#-addtimestamp-1)
+      * [-NoErrorDetails](#-noerrordetails)
+      * [-Force](#-force-3)
+      * [-ForceMail](#-forcemail-1)
+      * [-WhatIf](#-whatif-5)
+      * [-Confirm](#-confirm-5)
+      * [CommonParameters](#commonparameters-7)
+    * [OUTPUTS](#outputs-21)
+    * [NOTES](#notes-4)
+  * [Write-HostLog](#write-hostlog)
+    * [SYNOPSIS](#synopsis-22)
+    * [SYNTAX](#syntax-22)
+    * [EXAMPLES](#examples-14)
+      * [EXAMPLE 1](#example-1-14)
+    * [PARAMETERS](#parameters-8)
+      * [-Message](#-message-2)
+      * [-NoNewline](#-nonewline)
+      * [-ForegroundColor](#-foregroundcolor)
+      * [-BackgroundColor](#-backgroundcolor)
+      * [-NoOut](#-noout-2)
+      * [-NoLog](#-nolog-2)
+      * [-NoMail](#-nomail-2)
+      * [-AddTimestamp](#-addtimestamp-2)
+      * [-Force](#-force-4)
+      * [-ForceMail](#-forcemail-2)
+      * [-WhatIf](#-whatif-6)
+      * [-Confirm](#-confirm-6)
+      * [CommonParameters](#commonparameters-8)
+    * [OUTPUTS](#outputs-22)
+    * [NOTES](#notes-5)
+  * [Write-InformationLog](#write-informationlog)
+    * [SYNOPSIS](#synopsis-23)
+    * [SYNTAX](#syntax-23)
+    * [EXAMPLES](#examples-15)
+      * [EXAMPLE 1](#example-1-15)
+    * [PARAMETERS](#parameters-9)
+      * [-Message](#-message-3)
+      * [-NoOut](#-noout-3)
+      * [-NoLog](#-nolog-3)
+      * [-NoMail](#-nomail-3)
+      * [-AddTimestamp](#-addtimestamp-3)
+      * [-Force](#-force-5)
+      * [-ForceMail](#-forcemail-3)
+      * [-WhatIf](#-whatif-7)
+      * [-Confirm](#-confirm-7)
+      * [CommonParameters](#commonparameters-9)
+    * [OUTPUTS](#outputs-23)
+    * [NOTES](#notes-6)
+  * [Write-OutputLog](#write-outputlog)
+    * [SYNOPSIS](#synopsis-24)
+    * [SYNTAX](#syntax-24)
+    * [EXAMPLES](#examples-16)
+      * [EXAMPLE 1](#example-1-16)
+    * [PARAMETERS](#parameters-10)
+      * [-Message](#-message-4)
+      * [-NoOut](#-noout-4)
+      * [-NoLog](#-nolog-4)
+      * [-NoMail](#-nomail-4)
+      * [-AddTimestamp](#-addtimestamp-4)
+      * [-Force](#-force-6)
+      * [-ForceMail](#-forcemail-4)
+      * [-WhatIf](#-whatif-8)
+      * [-Confirm](#-confirm-8)
+      * [CommonParameters](#commonparameters-10)
+    * [OUTPUTS](#outputs-24)
+    * [NOTES](#notes-7)
+  * [Write-VerboseLog](#write-verboselog)
+    * [SYNOPSIS](#synopsis-25)
+    * [SYNTAX](#syntax-25)
+    * [EXAMPLES](#examples-17)
+      * [EXAMPLE 1](#example-1-17)
+    * [PARAMETERS](#parameters-11)
+      * [-Message](#-message-5)
+      * [-NoOut](#-noout-5)
+      * [-NoLog](#-nolog-5)
+      * [-NoMail](#-nomail-5)
+      * [-AddTimestamp](#-addtimestamp-5)
+      * [-Force](#-force-7)
+      * [-ForceMail](#-forcemail-5)
+      * [-WhatIf](#-whatif-9)
+      * [-Confirm](#-confirm-9)
+      * [CommonParameters](#commonparameters-11)
+    * [OUTPUTS](#outputs-25)
+    * [NOTES](#notes-8)
+  * [Write-WarningLog](#write-warninglog)
+    * [SYNOPSIS](#synopsis-26)
+    * [SYNTAX](#syntax-26)
+    * [EXAMPLES](#examples-18)
+      * [EXAMPLE 1](#example-1-18)
+    * [PARAMETERS](#parameters-12)
+      * [-Message](#-message-6)
+      * [-NoOut](#-noout-6)
+      * [-NoLog](#-nolog-6)
+      * [-NoMail](#-nomail-6)
+      * [-AddTimestamp](#-addtimestamp-6)
+      * [-Force](#-force-8)
+      * [-ForceMail](#-forcemail-6)
+      * [-WhatIf](#-whatif-10)
+      * [-Confirm](#-confirm-10)
+      * [CommonParameters](#commonparameters-12)
+    * [OUTPUTS](#outputs-26)
+    * [NOTES](#notes-9)
 
 ## How to use
 1. Start logging by using the Start-Log and/or Start-MailLog cmdlets
@@ -325,12 +370,12 @@ This Source Code Form is subject to the terms of the Mozilla Public License, v. 
 
 Many options and cmdlets to adapt the logging behaviour exist. Look at the documentation of each cmdlet to get a more detailed overview.
 
-### Example
+### Usage example
 In the following example, we start logging in files and mail and will send a mail if an error or a warning was encountered (via Write-ErrorLog or Write-WarningLog).
 The mail will contain our output and will have the current log file attached as well as the subject line "Notification from <Computername>/<ScriptName>, Reason: <Reason>".
 The example output will show the "Test error" exception which is in the comments of the example code.
 
-#### Example code
+#### Usage example code
 
 ```powershell
 # The LogCredentialsFile parameter can be used to store credentials for the smtp access in a file.
@@ -379,7 +424,7 @@ finally {
 }
 ```
 
-#### Example output
+#### Usage example output
 
 ```
 ***************************************************************************************************
@@ -417,7 +462,6 @@ finally {
 ```
 
 ## TUN.Logging Cmdlets
-
 ### Get-HasLogDebug
 
 #### SYNOPSIS
@@ -430,8 +474,12 @@ Get-HasLogDebug
 ```
 
 #### OUTPUTS
+
 True....There have been debug messages logged to the log file
+
 False...No debug messages have yet been logged to the log file
+
+
 
 ### Get-HasLogError
 
@@ -445,8 +493,12 @@ Get-HasLogError
 ```
 
 #### OUTPUTS
+
 True....There have been errors logged to the log file
+
 False...No errors have yet been logged to the log file
+
+
 
 ### Get-HasLogHost
 
@@ -460,8 +512,12 @@ Get-HasLogHost
 ```
 
 #### OUTPUTS
+
 True....There have been host messages logged to the log file
+
 False...No host messages have yet been logged to the log file
+
+
 
 ### Get-HasLogInformation
 
@@ -475,8 +531,12 @@ Get-HasLogInformation
 ```
 
 #### OUTPUTS
+
 True....There have been information messages logged to the log file
+
 False...No information messages have yet been logged to the log file
+
+
 
 ### Get-HasLogOutput
 
@@ -490,8 +550,12 @@ Get-HasLogOutput
 ```
 
 #### OUTPUTS
+
 True....There have been output messages logged to the log file
+
 False...No output messages have yet been logged to the log file
+
+
 
 ### Get-HasLogVerbose
 
@@ -505,8 +569,12 @@ Get-HasLogVerbose
 ```
 
 #### OUTPUTS
+
 True....There have been verbose messages logged to the log file
+
 False...No verbose messages have yet been logged to the log file
+
+
 
 ### Get-HasLogWarning
 
@@ -520,8 +588,12 @@ Get-HasLogWarning
 ```
 
 #### OUTPUTS
+
 True....There have been warnings logged to the log file
+
 False...No warnings have yet been logged to the log file
+
+
 
 ### Get-HasMailLogDebug
 
@@ -536,16 +608,19 @@ Get-HasMailLogDebug
 
 #### EXAMPLES
 
-##### Example 1
-```powershell
+##### EXAMPLE 1
+```
+# Due to Get-HasMailLogDebug, this log mail will only have the log file attached if a debug output was written to the log mail.
 Send-Log -SendOnWarning -SendOnError -From $LogMailFrom -To $LogMailTo -SmtpServer $LogMailSmtpServer -AttachLogfile:$(Get-HasMailLogDebug)
 ```
 
-Due to Get-HasMailLogDebug, this log mail will only have the log file attached if a debug output was written to the log mail.
-
 #### OUTPUTS
+
 True....There have been debug messages logged to the mail log
+
 False...No debug messages have yet been logged to the mail log
+
+
 
 ### Get-HasMailLogError
 
@@ -560,16 +635,19 @@ Get-HasMailLogError
 
 #### EXAMPLES
 
-##### Example 1
-```powershell
+##### EXAMPLE 1
+```
+# Due to Get-HasMailLogError and Get-HasMailLogWarning, this log mail will only have the log file attached if an error or warning were written to the log mail, but not if the sending was forced via Set-ForceLogSend.
 Send-Log -SendOnWarning -SendOnError -From $LogMailFrom -To $LogMailTo -SmtpServer $LogMailSmtpServer -AttachLogfile:$((Get-HasMailLogError) -or (Get-HasMailLogWarning))
 ```
 
-Due to Get-HasMailLogError and Get-HasMailLogWarning, this log mail will only have the log file attached if an error or warning were written to the log mail, but not if the sending was forced via Set-ForceLogSend.
-
 #### OUTPUTS
+
 True....There have been errors logged to the mail log
+
 False...No errors have yet been logged to the mail log
+
+
 
 ### Get-HasMailLogHost
 
@@ -584,16 +662,19 @@ Get-HasMailLogHost
 
 #### EXAMPLES
 
-##### Example 1
-```powershell
+##### EXAMPLE 1
+```
+# Due to Get-HasMailLogHost, this log mail will only have the log file attached if a host output was written to the log mail.
 Send-Log -SendOnWarning -SendOnError -From $LogMailFrom -To $LogMailTo -SmtpServer $LogMailSmtpServer -AttachLogfile:$(Get-HasMailLogHost)
 ```
 
-Due to Get-HasMailLogHost, this log mail will only have the log file attached if a host output was written to the log mail.
-
 #### OUTPUTS
+
 True....There have been host messages logged to the mail log
+
 False...No host messages have yet been logged to the mail log
+
+
 
 ### Get-HasMailLogInformation
 
@@ -608,16 +689,19 @@ Get-HasMailLogInformation
 
 #### EXAMPLES
 
-##### Example 1
-```powershell
+##### EXAMPLE 1
+```
+# Due to Get-HasMailLogInformation, this log mail will only have the log file attached if an information output was written to the log mail.
 Send-Log -SendOnWarning -SendOnError -From $LogMailFrom -To $LogMailTo -SmtpServer $LogMailSmtpServer -AttachLogfile:$(Get-HasMailLogInformation)
 ```
 
-Due to Get-HasMailLogInformation, this log mail will only have the log file attached if an information output was written to the log mail.
-
 #### OUTPUTS
+
 True....There have been information messages logged to the mail log
+
 False...No information messages have yet been logged to the mail log
+
+
 
 ### Get-HasMailLogOutput
 
@@ -632,16 +716,19 @@ Get-HasMailLogOutput
 
 #### EXAMPLES
 
-##### Example 1
-```powershell
+##### EXAMPLE 1
+```
+# Due to Get-HasMailLogOutput, this log mail will only have the log file attached if an output (Write-Output) was written to the log mail.
 Send-Log -SendOnWarning -SendOnError -From $LogMailFrom -To $LogMailTo -SmtpServer $LogMailSmtpServer -AttachLogfile:$(Get-HasMailLogOutput)
 ```
 
-Due to Get-HasMailLogOutput, this log mail will only have the log file attached if an output (Write-Output) was written to the log mail.
-
 #### OUTPUTS
+
 True....There have been output messages logged to the mail log
+
 False...No output messages have yet been logged to the mail log
+
+
 
 ### Get-HasMailLogVerbose
 
@@ -656,16 +743,19 @@ Get-HasMailLogVerbose
 
 #### EXAMPLES
 
-##### Example 1
-```powershell
+##### EXAMPLE 1
+```
+# Due to Get-HasMailLogVerbose, this log mail will only have the log file attached if a verbose output was written to the log mail.
 Send-Log -SendOnWarning -SendOnError -From $LogMailFrom -To $LogMailTo -SmtpServer $LogMailSmtpServer -AttachLogfile:$(Get-HasMailLogVerbose)
 ```
 
-Due to Get-HasMailLogVerbose, this log mail will only have the log file attached if a verbose output was written to the log mail.
-
 #### OUTPUTS
+
 True....There have been verbose messages logged to the mail log
+
 False...No verbose messages have yet been logged to the mail log
+
+
 
 ### Get-HasMailLogWarning
 
@@ -680,16 +770,57 @@ Get-HasMailLogWarning
 
 #### EXAMPLES
 
-##### Example 1
-```powershell
+##### EXAMPLE 1
+```
+# Due to Get-HasMailLogError and Get-HasMailLogWarning, this log mail will only have the log file attached if an error or warning was written to the log mail, but not if the sending was forced via Set-ForceLogSend.
 Send-Log -SendOnWarning -SendOnError -From $LogMailFrom -To $LogMailTo -SmtpServer $LogMailSmtpServer -AttachLogfile:$((Get-HasMailLogError) -or (Get-HasMailLogWarning))
 ```
 
-Due to Get-HasMailLogError and Get-HasMailLogWarning, this log mail will only have the log file attached if an error or warning was written to the log mail, but not if the sending was forced via Set-ForceLogSend.
+#### OUTPUTS
+
+True....There have been warnings logged to the mail log
+
+False...No warnings have yet been logged to the mail log
+
+
+
+### Get-TUNLoggingVersion
+
+#### SYNOPSIS
+Returns version of current TUN.Logging module
+
+#### SYNTAX
+
+```
+Get-TUNLoggingVersion [-AsString] [<CommonParameters>]
+```
+
+#### PARAMETERS
+
+##### -AsString
+True/Present...will return a version string
+False/Absent...will return a version object
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 1
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+##### CommonParameters
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 #### OUTPUTS
-True....There have been warnings logged to the mail log
-False...No warnings have yet been logged to the mail log
+
+Version of TUN.Logging module
+
+
 
 ### Send-Log
 
@@ -707,13 +838,12 @@ Send-Log [-From] <String> [-To] <String[]> [[-SmtpServer] <String>] [[-Subject] 
 
 #### EXAMPLES
 
-##### Example 1
-```powershell
+##### EXAMPLE 1
+```
+# Send a log mail if any errors or warnings occured. 
+# Send from the address "from.address@yourdomain.com" and smtp server "smtp.yourdomain.com", use a ssl connection and attach the logfile to the mail.
 Send-Log -SendOnWarning -SendOnError -From "from.address@yourdomain.com" -To "your.mail@yourdomain.com" -UseSsl -SmtpServer "smtp.yourdomain.com" -AttachLogfile
 ```
-
-Send a log mail if any errors or warnings occured. 
-Send from the address "from.address@yourdomain.com" and smtp server "smtp.yourdomain.com", use a ssl connection and attach the logfile to the mail.
 
 #### PARAMETERS
 
@@ -933,9 +1063,6 @@ Accept wildcard characters: False
 ```
 
 ##### -WhatIf
-Shows what would happen if the cmdlet runs.
-The cmdlet is not run.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -949,8 +1076,6 @@ Accept wildcard characters: False
 ```
 
 ##### -Confirm
-Prompts you for confirmation before running the cmdlet.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -967,11 +1092,14 @@ Accept wildcard characters: False
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 #### OUTPUTS
+
 None
 
 #### NOTES
 Once this function has been called, the Write-ErrorLog etc.
 functions will not add any more lines to the mail log.
+
+
 
 ### Set-ForceLogSend
 
@@ -986,12 +1114,11 @@ Set-ForceLogSend [[-Reason] <String>] [<CommonParameters>]
 
 #### EXAMPLES
 
-##### Example 1
-```powershell
+##### EXAMPLE 1
+```
+# This call will force a log mail to be sent, giving the reason "Simon said so" in the subject line.
 Set-ForceLogSend "Simon said so"
 ```
-
-This call will force a log mail to be sent, giving the reason "Simon said so" in the subject line.
 
 #### PARAMETERS
 
@@ -1015,7 +1142,10 @@ Accept wildcard characters: False
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 #### OUTPUTS
+
 None
+
+
 
 ### Start-Log
 
@@ -1029,9 +1159,10 @@ Start-Log [[-LogPath] <String>] [[-LogName] <String>] [[-LogExtension] <String>]
  [[-LogPreference_LogError] <Boolean>] [[-LogPreference_LogHost] <Boolean>]
  [[-LogPreference_LogOutput] <Boolean>] [[-LogPreference_LogVerbose] <Boolean>]
  [[-LogPreference_LogWarning] <Boolean>] [[-LogPreference_LogDebug] <Boolean>]
- [[-LogPreference_LogInformation] <Boolean>] [-NoTimestamp] [-UseComputerPrefix] [-UseScriptPrefix]
- [-UseDefaultName] [-NoDateTimeFormat] [-DeleteExisting] [-AsOutput] [-Force] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+ [[-LogPreference_LogInformation] <Boolean>] [[-LogPreference_FallbackForegroundColor] <ConsoleColor>]
+ [[-LogPreference_FallbackBackgroundColor] <ConsoleColor>] [-NoTimestamp] [-UseComputerPrefix]
+ [-UseScriptPrefix] [-UseDefaultName] [-NoDateTimeFormat] [-DeleteExisting] [-AsOutput] [-Force] [-WhatIf]
+ [-Confirm] [<CommonParameters>]
 ```
 
 #### DESCRIPTION
@@ -1040,12 +1171,11 @@ functions will add lines to a log file.
 
 #### EXAMPLES
 
-##### Example 1
-```powershell
+##### EXAMPLE 1
+```
+# Will start logging and save logfile in current directory, with computer and script prefix as well as the current date all present in the filename:
 Start-Log -LogPath ".\" -UseComputerPrefix -UseScriptPrefix -LogName "yyyy-MM-dd"
 ```
-
-Will start logging and save logfile in current directory, with computer and script prefix as well as the current date all present in the filename.
 
 #### PARAMETERS
 
@@ -1245,6 +1375,40 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+##### -LogPreference_FallbackForegroundColor
+The fallback foreground color for the console if none was provided and the current foreground color could not be determined from the console.
+The default is Gray.
+
+```yaml
+Type: ConsoleColor
+Parameter Sets: (All)
+Aliases:
+Accepted values: Black, DarkBlue, DarkGreen, DarkCyan, DarkRed, DarkMagenta, DarkYellow, Gray, DarkGray, Blue, Green, Cyan, Red, Magenta, Yellow, White
+
+Required: False
+Position: 11
+Default value: Gray
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+##### -LogPreference_FallbackBackgroundColor
+The fallback background color for the console if none was provided and the current background color could not be determined from the console.
+The default is Black.
+
+```yaml
+Type: ConsoleColor
+Parameter Sets: (All)
+Aliases:
+Accepted values: Black, DarkBlue, DarkGreen, DarkCyan, DarkRed, DarkMagenta, DarkYellow, Gray, DarkGray, Blue, Green, Cyan, Red, Magenta, Yellow, White
+
+Required: False
+Position: 12
+Default value: Black
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ##### -NoTimestamp
 True/Present...Will not automatically add a timestamp to the beginning of each line in the log file.
                 If this switch is set, use the -AddTimestamp switch on individual log calls to add a timestamp if needed.
@@ -1376,9 +1540,6 @@ Accept wildcard characters: False
 ```
 
 ##### -WhatIf
-Shows what would happen if the cmdlet runs.
-The cmdlet is not run.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -1392,8 +1553,6 @@ Accept wildcard characters: False
 ```
 
 ##### -Confirm
-Prompts you for confirmation before running the cmdlet.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -1410,7 +1569,10 @@ Accept wildcard characters: False
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 #### OUTPUTS
+
 None
+
+
 
 ### Start-MailLog
 
@@ -1423,8 +1585,10 @@ Starts logging process for mail log.
 Start-MailLog [[-CredentialsFile] <String>] [[-LogPreference_MailError] <Boolean>]
  [[-LogPreference_MailHost] <Boolean>] [[-LogPreference_MailOutput] <Boolean>]
  [[-LogPreference_MailVerbose] <Boolean>] [[-LogPreference_MailWarning] <Boolean>]
- [[-LogPreference_MailDebug] <Boolean>] [[-LogPreference_MailInformation] <Boolean>] [-AsOutput]
- [-InitCredentials] [-Force] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [[-LogPreference_MailDebug] <Boolean>] [[-LogPreference_MailInformation] <Boolean>]
+ [[-LogPreference_FallbackForegroundColor] <ConsoleColor>]
+ [[-LogPreference_FallbackBackgroundColor] <ConsoleColor>] [-AsOutput] [-InitCredentials] [-Force] [-WhatIf]
+ [-Confirm] [<CommonParameters>]
 ```
 
 #### DESCRIPTION
@@ -1434,20 +1598,18 @@ that can later on be sent by mail with the Send-Log command.
 
 #### EXAMPLES
 
-##### Example 1
-```powershell
+##### EXAMPLE 1
+```
+# Initialize the log mail sending credentials, used to access the smtp server.
+# The -InitCredentials switch will prompt for credentials, save them in the "C:\MyCredentials.cfg" file and will then immediately exit the script.
 Start-MailLog -InitCredentials -CredentialsFile "C:\MyCredentials.cfg"
 ```
 
-Initialize the log mail sending credentials, used to access the smtp server.
-The -InitCredentials switch will prompt for credentials, save them in the "C:\MyCredentials.cfg" file and will then immediately exit the script.
-
-##### Example 2
-```powershell
+##### EXAMPLE 2
+```
+# Start the mail logging, write everything to the mail that's also written to the console and use the credentials stored in the "C:\MyCredentials.cfg" file to authenticate yourself at the smtp server when sending the mail.
 Start-MailLog -AsOutput -CredentialsFile "C:\MyCredentials.cfg"
 ```
-
-Start the mail logging, write everything to the mail that's also written to the console and use the credentials stored in the "C:\MyCredentials.cfg" file to authenticate yourself at the smtp server when sending the mail.
 
 #### PARAMETERS
 
@@ -1608,6 +1770,40 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+##### -LogPreference_FallbackForegroundColor
+The fallback foreground color for the console if none was provided and the current foreground color could not be determined from the console.
+The default is Gray.
+
+```yaml
+Type: ConsoleColor
+Parameter Sets: (All)
+Aliases:
+Accepted values: Black, DarkBlue, DarkGreen, DarkCyan, DarkRed, DarkMagenta, DarkYellow, Gray, DarkGray, Blue, Green, Cyan, Red, Magenta, Yellow, White
+
+Required: False
+Position: 9
+Default value: Gray
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+##### -LogPreference_FallbackBackgroundColor
+The fallback background color for the console if none was provided and the current background color could not be determined from the console.
+The default is Black.
+
+```yaml
+Type: ConsoleColor
+Parameter Sets: (All)
+Aliases:
+Accepted values: Black, DarkBlue, DarkGreen, DarkCyan, DarkRed, DarkMagenta, DarkYellow, Gray, DarkGray, Blue, Green, Cyan, Red, Magenta, Yellow, White
+
+Required: False
+Position: 10
+Default value: Black
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ##### -AsOutput
 True/Present...For all message types for which no LogPreference was set (or for which the LogPreference is null) the 
                 message will only be added if it is displayed to the user (or would be displayed to the user if
@@ -1665,9 +1861,6 @@ Accept wildcard characters: False
 ```
 
 ##### -WhatIf
-Shows what would happen if the cmdlet runs.
-The cmdlet is not run.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -1681,8 +1874,6 @@ Accept wildcard characters: False
 ```
 
 ##### -Confirm
-Prompts you for confirmation before running the cmdlet.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -1699,6 +1890,7 @@ Accept wildcard characters: False
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 #### OUTPUTS
+
 None
 
 #### NOTES
@@ -1709,6 +1901,8 @@ and exits the script immediately after saving the credentials without executing 
 This is because the -WhatIf switch 
 cannot be used to make sure the script is not performing its task, because it will also prevent the script from saving the credentials to 
 the credentials file.
+
+
 
 ### Stop-Log
 
@@ -1723,19 +1917,15 @@ Stop-Log [-WhatIf] [-Confirm] [<CommonParameters>]
 
 #### EXAMPLES
 
-##### Example 1
-```powershell
+##### EXAMPLE 1
+```
+# Stop the file logging and close the log file, this should be the last command in a script which uses logs.
 Stop-Log
 ```
-
-Stop the file logging and close the log file, this should be the last command in a script which uses logs.
 
 #### PARAMETERS
 
 ##### -WhatIf
-Shows what would happen if the cmdlet runs.
-The cmdlet is not run.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -1749,8 +1939,6 @@ Accept wildcard characters: False
 ```
 
 ##### -Confirm
-Prompts you for confirmation before running the cmdlet.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -1767,11 +1955,14 @@ Accept wildcard characters: False
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 #### OUTPUTS
+
 None
 
 #### NOTES
 Once this function has been called, the Write-ErrorLog etc.
 functions will not add any more lines to the file log.
+
+
 
 ### Write-DebugLog
 
@@ -1787,12 +1978,11 @@ Write-DebugLog [-Message] <Object> [-NoOut] [-NoLog] [-NoMail] [-AddTimestamp] [
 
 #### EXAMPLES
 
-##### Example 1
-```powershell
+##### EXAMPLE 1
+```
+# Will write a debug message to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
 Write-DebugLog "Debug example"
 ```
-
-Will write a debug message to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
 
 #### PARAMETERS
 
@@ -1905,9 +2095,6 @@ Accept wildcard characters: False
 ```
 
 ##### -WhatIf
-Shows what would happen if the cmdlet runs.
-The cmdlet is not run.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -1921,8 +2108,6 @@ Accept wildcard characters: False
 ```
 
 ##### -Confirm
-Prompts you for confirmation before running the cmdlet.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -1939,10 +2124,13 @@ Accept wildcard characters: False
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 #### OUTPUTS
+
 None (Prints debug message)
 
 #### NOTES
 Can recieve the message through pipe
+
+
 
 ### Write-ErrorLog
 
@@ -1958,26 +2146,24 @@ Write-ErrorLog [[-Message] <String>] [[-Category] <ErrorCategory>] [[-Err] <Erro
 
 #### EXAMPLES
 
-##### Example 1
-```powershell
+##### EXAMPLE 1
+```
+# Will write a error message to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
 Write-ErrorLog "Error example"
 ```
 
-Will write a error message to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
-
-##### Example 2
-```powershell
-try {
-	throw "Some test"
+##### EXAMPLE 2
+```
+# Will write the error message "Critical error" along with all important error information to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
+# The Write-ErrorLog cmdlet is a bit more powerfull than the normal Write-Error cmdlet, in that it allows you to pass the error object via pipeline to the cmdlet and it will print out all needed information for you.
+# You can, however, also use the -NoErrorDetails switch of this cmdlet to hide most of the error information to the outside world (you might need to use two seperate calls then, one for the logs with all details, and one for the console with no details).
+try {    
+    throw "Some test"
 }
-catch {
-	$_ | Write-ErrorLog "Critical error"
+catch {    
+    $_ | Write-ErrorLog "Critical error"
 }
 ```
-
-Will write the error message "Critical error" along with all important error information to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
-The Write-ErrorLog cmdlet is a bit more powerfull than the normal Write-Error cmdlet, in that it allows you to pass the error object via pipeline to the cmdlet and it will print out all needed information for you.
-You can, however, also use the -NoErrorDetails switch of this cmdlet to hide most of the error information to the outside world (you might need to use two seperate calls then, one for the logs with all details, and one for the console with no details).
 
 #### PARAMETERS
 
@@ -2137,9 +2323,6 @@ Accept wildcard characters: False
 ```
 
 ##### -WhatIf
-Shows what would happen if the cmdlet runs.
-The cmdlet is not run.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -2153,8 +2336,6 @@ Accept wildcard characters: False
 ```
 
 ##### -Confirm
-Prompts you for confirmation before running the cmdlet.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -2171,6 +2352,7 @@ Accept wildcard characters: False
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 #### OUTPUTS
+
 None (Prints error message)
 
 #### NOTES
@@ -2179,6 +2361,8 @@ catch
 {
     $_ | Write-ErrorLog "Example error message"
 }
+
+
 
 ### Write-HostLog
 
@@ -2195,12 +2379,11 @@ Write-HostLog [-Message] <Object> [-NoNewline] [[-ForegroundColor] <ConsoleColor
 
 #### EXAMPLES
 
-##### Example 1
-```powershell
+##### EXAMPLE 1
+```
+# Will write a host message to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
 Write-HostLog "Host example"
 ```
-
-Will write a host message to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
 
 #### PARAMETERS
 
@@ -2245,7 +2428,7 @@ Accepted values: Black, DarkBlue, DarkGreen, DarkCyan, DarkRed, DarkMagenta, Dar
 
 Required: False
 Position: 2
-Default value: $host.UI.RawUI.ForegroundColor
+Default value: (Get-ConsoleForegroundColor)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -2261,7 +2444,7 @@ Accepted values: Black, DarkBlue, DarkGreen, DarkCyan, DarkRed, DarkMagenta, Dar
 
 Required: False
 Position: 3
-Default value: $host.UI.RawUI.BackgroundColor
+Default value: (Get-ConsoleBackgroundColor)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -2360,9 +2543,6 @@ Accept wildcard characters: False
 ```
 
 ##### -WhatIf
-Shows what would happen if the cmdlet runs.
-The cmdlet is not run.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -2376,8 +2556,6 @@ Accept wildcard characters: False
 ```
 
 ##### -Confirm
-Prompts you for confirmation before running the cmdlet.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -2394,10 +2572,13 @@ Accept wildcard characters: False
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 #### OUTPUTS
+
 None (Prints host message)
 
 #### NOTES
 Can recieve the message through pipe
+
+
 
 ### Write-InformationLog
 
@@ -2413,12 +2594,11 @@ Write-InformationLog [-Message] <Object> [-NoOut] [-NoLog] [-NoMail] [-AddTimest
 
 #### EXAMPLES
 
-##### Example 1
-```powershell
+##### EXAMPLE 1
+```
+# Will write a information message to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
 Write-InformationLog "Information example"
 ```
-
-Will write a information message to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
 
 #### PARAMETERS
 
@@ -2531,9 +2711,6 @@ Accept wildcard characters: False
 ```
 
 ##### -WhatIf
-Shows what would happen if the cmdlet runs.
-The cmdlet is not run.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -2547,8 +2724,6 @@ Accept wildcard characters: False
 ```
 
 ##### -Confirm
-Prompts you for confirmation before running the cmdlet.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -2565,10 +2740,13 @@ Accept wildcard characters: False
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 #### OUTPUTS
+
 None (Prints information message)
 
 #### NOTES
 Can recieve the message through pipe
+
+
 
 ### Write-OutputLog
 
@@ -2584,12 +2762,11 @@ Write-OutputLog [-Message] <Object> [-NoOut] [-NoLog] [-NoMail] [-AddTimestamp] 
 
 #### EXAMPLES
 
-##### Example 1
-```powershell
+##### EXAMPLE 1
+```
+# Will write a output message to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
 Write-OutputLog "Output example"
 ```
-
-Will write a output message to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
 
 #### PARAMETERS
 
@@ -2702,9 +2879,6 @@ Accept wildcard characters: False
 ```
 
 ##### -WhatIf
-Shows what would happen if the cmdlet runs.
-The cmdlet is not run.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -2718,8 +2892,6 @@ Accept wildcard characters: False
 ```
 
 ##### -Confirm
-Prompts you for confirmation before running the cmdlet.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -2736,10 +2908,13 @@ Accept wildcard characters: False
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 #### OUTPUTS
+
 None (Prints output message)
 
 #### NOTES
 Can recieve the message through pipe
+
+
 
 ### Write-VerboseLog
 
@@ -2755,12 +2930,11 @@ Write-VerboseLog [-Message] <Object> [-NoOut] [-NoLog] [-NoMail] [-AddTimestamp]
 
 #### EXAMPLES
 
-##### Example 1
-```powershell
+##### EXAMPLE 1
+```
+# Will write a verbose message to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
 Write-VerboseLog "Verbose example"
 ```
-
-Will write a verbose message to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
 
 #### PARAMETERS
 
@@ -2873,9 +3047,6 @@ Accept wildcard characters: False
 ```
 
 ##### -WhatIf
-Shows what would happen if the cmdlet runs.
-The cmdlet is not run.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -2889,8 +3060,6 @@ Accept wildcard characters: False
 ```
 
 ##### -Confirm
-Prompts you for confirmation before running the cmdlet.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -2907,10 +3076,13 @@ Accept wildcard characters: False
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 #### OUTPUTS
+
 None (Prints verbose message)
 
 #### NOTES
 Can recieve the message through pipe
+
+
 
 ### Write-WarningLog
 
@@ -2926,12 +3098,11 @@ Write-WarningLog [-Message] <Object> [-NoOut] [-NoLog] [-NoMail] [-AddTimestamp]
 
 #### EXAMPLES
 
-##### Example 1
-```powershell
+##### EXAMPLE 1
+```
+# Will write a warning message to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
 Write-WarningLog "Warning example"
 ```
-
-Will write a warning message to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
 
 #### PARAMETERS
 
@@ -3044,9 +3215,6 @@ Accept wildcard characters: False
 ```
 
 ##### -WhatIf
-Shows what would happen if the cmdlet runs.
-The cmdlet is not run.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -3060,8 +3228,6 @@ Accept wildcard characters: False
 ```
 
 ##### -Confirm
-Prompts you for confirmation before running the cmdlet.
-
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
@@ -3078,8 +3244,11 @@ Accept wildcard characters: False
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 #### OUTPUTS
+
 None (Prints warning message)
 
 #### NOTES
 Can recieve the message through pipe
+
+
 

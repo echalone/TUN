@@ -950,6 +950,13 @@ function Start-MailLog {
         False/Absent...Will only log if -WhatIf switch is not present in calling script
     .OUTPUTS
         None
+    .EXAMPLE
+        # Initialize the log mail sending credentials, used to access the smtp server.
+        # The -InitCredentials switch will prompt for credentials, save them in the "C:\MyCredentials.cfg" file and will then immediately exit the script.
+        Start-MailLog -InitCredentials -CredentialsFile "C:\MyCredentials.cfg"
+    .EXAMPLE
+        # Start the mail logging, write everything to the mail that's also written to the console and use the credentials stored in the "C:\MyCredentials.cfg" file to authenticate yourself at the smtp server when sending the mail.
+        Start-MailLog -AsOutput -CredentialsFile "C:\MyCredentials.cfg"
 #>
 
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -1065,6 +1072,10 @@ function Send-Log {
         True/Present...Will attach the log file to the log mail if file logging was enabled.
     .OUTPUTS
         None
+    .EXAMPLE
+        # Send a log mail if any errors or warnings occured. 
+        # Send from the address "from.address@yourdomain.com" and smtp server "smtp.yourdomain.com", use a ssl connection and attach the logfile to the mail.
+        Send-Log -SendOnWarning -SendOnError -From "from.address@yourdomain.com" -To "your.mail@yourdomain.com" -UseSsl -SmtpServer "smtp.yourdomain.com" -AttachLogfile
 #>
     [CmdletBinding(SupportsShouldProcess=$true)]
     PARAM (
@@ -1340,6 +1351,9 @@ function Start-Log {
         False/Absent...Will only log if -WhatIf switch is not present in calling script
     .OUTPUTS
         None
+	.EXAMPLE
+		# Will start logging and save logfile in current directory, with computer and script prefix as well as the current date all present in the filename:
+		Start-Log -LogPath ".\" -UseComputerPrefix -UseScriptPrefix -LogName "yyyy-MM-dd"
 #>
     [CmdletBinding(SupportsShouldProcess=$true)]
     PARAM(
@@ -1489,6 +1503,9 @@ function Stop-Log {
         Once this function has been called, the Write-ErrorLog etc. functions will not add any more lines to the file log.
     .OUTPUTS
         None
+    .EXAMPLE
+        # Stop the file logging and close the log file, this should be the last command in a script which uses logs.
+        Stop-Log
 #>
 
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -1533,6 +1550,9 @@ function Set-ForceLogSend {
         If no reason is given here, "forced" will be given as reason in the subject line.
     .OUTPUTS
         None
+    .EXAMPLE
+        # This call will force a log mail to be sent, giving the reason "Simon said so" in the subject line.
+        Set-ForceLogSend "Simon said so"
 #>
 
     PARAM (
@@ -1563,6 +1583,9 @@ function Get-HasMailLogError {
     .OUTPUTS
         True....There have been errors logged to the mail log
         False...No errors have yet been logged to the mail log
+    .EXAMPLE
+        # Due to Get-HasMailLogError and Get-HasMailLogWarning, this log mail will only have the log file attached if an error or warning were written to the log mail, but not if the sending was forced via Set-ForceLogSend.
+        Send-Log -SendOnWarning -SendOnError -From $LogMailFrom -To $LogMailTo -SmtpServer $LogMailSmtpServer -AttachLogfile:$((Get-HasMailLogError) -or (Get-HasMailLogWarning))
 #>
 
     if($script:ErrorMailCount -gt 0) { return $true; } else { return $false; }
@@ -1587,6 +1610,9 @@ function Get-HasMailLogWarning {
     .OUTPUTS
         True....There have been warnings logged to the mail log
         False...No warnings have yet been logged to the mail log
+    .EXAMPLE
+        # Due to Get-HasMailLogError and Get-HasMailLogWarning, this log mail will only have the log file attached if an error or warning was written to the log mail, but not if the sending was forced via Set-ForceLogSend.
+        Send-Log -SendOnWarning -SendOnError -From $LogMailFrom -To $LogMailTo -SmtpServer $LogMailSmtpServer -AttachLogfile:$((Get-HasMailLogError) -or (Get-HasMailLogWarning))
 #>
 
     if($script:WarningMailCount -gt 0) { return $true; } else { return $false; }
@@ -1611,6 +1637,9 @@ function Get-HasMailLogOutput {
     .OUTPUTS
         True....There have been output messages logged to the mail log
         False...No output messages have yet been logged to the mail log
+    .EXAMPLE
+        # Due to Get-HasMailLogOutput, this log mail will only have the log file attached if an output (Write-Output) was written to the log mail.
+        Send-Log -SendOnWarning -SendOnError -From $LogMailFrom -To $LogMailTo -SmtpServer $LogMailSmtpServer -AttachLogfile:$(Get-HasMailLogOutput)
 #>
 
     if($script:OutputMailCount -gt 0) { return $true; } else { return $false; }
@@ -1635,6 +1664,9 @@ function Get-HasMailLogHost {
     .OUTPUTS
         True....There have been host messages logged to the mail log
         False...No host messages have yet been logged to the mail log
+    .EXAMPLE
+        # Due to Get-HasMailLogHost, this log mail will only have the log file attached if a host output was written to the log mail.
+        Send-Log -SendOnWarning -SendOnError -From $LogMailFrom -To $LogMailTo -SmtpServer $LogMailSmtpServer -AttachLogfile:$(Get-HasMailLogHost)
 #>
 
     if($script:HostMailCount -gt 0) { return $true; } else { return $false; }
@@ -1659,6 +1691,9 @@ function Get-HasMailLogDebug {
     .OUTPUTS
         True....There have been debug messages logged to the mail log
         False...No debug messages have yet been logged to the mail log
+    .EXAMPLE
+        # Due to Get-HasMailLogDebug, this log mail will only have the log file attached if a debug output was written to the log mail.
+        Send-Log -SendOnWarning -SendOnError -From $LogMailFrom -To $LogMailTo -SmtpServer $LogMailSmtpServer -AttachLogfile:$(Get-HasMailLogDebug)
 #>
 
     if($script:DebugMailCount -gt 0) { return $true; } else { return $false; }
@@ -1683,6 +1718,9 @@ function Get-HasMailLogVerbose {
     .OUTPUTS
         True....There have been verbose messages logged to the mail log
         False...No verbose messages have yet been logged to the mail log
+    .EXAMPLE
+        # Due to Get-HasMailLogVerbose, this log mail will only have the log file attached if a verbose output was written to the log mail.
+        Send-Log -SendOnWarning -SendOnError -From $LogMailFrom -To $LogMailTo -SmtpServer $LogMailSmtpServer -AttachLogfile:$(Get-HasMailLogVerbose)
 #>
 
     if($script:VerboseMailCount -gt 0) { return $true; } else { return $false; }
@@ -1707,6 +1745,9 @@ function Get-HasMailLogInformation {
     .OUTPUTS
         True....There have been information messages logged to the mail log
         False...No information messages have yet been logged to the mail log
+    .EXAMPLE
+        # Due to Get-HasMailLogInformation, this log mail will only have the log file attached if an information output was written to the log mail.
+        Send-Log -SendOnWarning -SendOnError -From $LogMailFrom -To $LogMailTo -SmtpServer $LogMailSmtpServer -AttachLogfile:$(Get-HasMailLogInformation)
 #>
 
     if($script:InformationMailCount -gt 0) { return $true; } else { return $false; }
@@ -1749,6 +1790,19 @@ function Write-ErrorLog {
         False/Absent...Will only write the message to the mail log if error message logging rules apply (as set on Start-MailLog call)
     .OUTPUTS
         None (Prints error message)
+    .EXAMPLE
+        # Will write a error message to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
+        Write-ErrorLog "Error example"
+    .EXAMPLE
+        # Will write the error message "Critical error" along with all important error information to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
+        # The Write-ErrorLog cmdlet is a bit more powerfull than the normal Write-Error cmdlet, in that it allows you to pass the error object via pipeline to the cmdlet and it will print out all needed information for you.
+        # You can, however, also use the -NoErrorDetails switch of this cmdlet to hide most of the error information to the outside world (you might need to use two seperate calls then, one for the logs with all details, and one for the console with no details).
+        try {    
+            throw "Some test"
+        }
+        catch {    
+            $_ | Write-ErrorLog "Critical error"
+        }
 #>
 
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -1850,6 +1904,9 @@ function Write-HostLog {
         False/Absent...Will only write the message to the mail log if host message logging rules apply (as set on Start-MailLog call)
     .OUTPUTS
         None (Prints host message)
+    .EXAMPLE
+        # Will write a host message to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
+        Write-HostLog "Host example"
 #>
 
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -1908,6 +1965,9 @@ function Write-OutputLog {
         False/Absent...Will only write the message to the mail log if output message logging rules apply (as set on Start-MailLog call)
     .OUTPUTS
         None (Prints output message)
+    .EXAMPLE
+        # Will write a output message to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
+        Write-OutputLog "Output example"
 #>
 
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -1963,6 +2023,9 @@ function Write-VerboseLog {
         False/Absent...Will only write the message to the mail log if verbose message logging rules apply (as set on Start-MailLog call)
     .OUTPUTS
         None (Prints verbose message)
+    .EXAMPLE
+        # Will write a verbose message to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
+        Write-VerboseLog "Verbose example"
 #>
 
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -2018,6 +2081,9 @@ function Write-WarningLog {
         False/Absent...Will only write the message to the mail log if warning message logging rules apply (as set on Start-MailLog call)
     .OUTPUTS
         None (Prints warning message)
+    .EXAMPLE
+        # Will write a warning message to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
+        Write-WarningLog "Warning example"
 #>
 
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -2073,6 +2139,9 @@ function Write-DebugLog {
         False/Absent...Will only write the message to the mail log if debug message logging rules apply (as set on Start-MailLog call)
     .OUTPUTS
         None (Prints debug message)
+    .EXAMPLE
+        # Will write a debug message to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
+        Write-DebugLog "Debug example"
 #>
 
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -2128,6 +2197,9 @@ function Write-InformationLog {
         False/Absent...Will only write the message to the mail log if information message logging rules apply (as set on Start-MailLog call)
     .OUTPUTS
         None (Prints information message)
+    .EXAMPLE
+        # Will write a information message to the console and file/mail log (depending on which of those have been started with their corresponding start logging cmdlet Start-Log and/or Start-MailLog).
+        Write-InformationLog "Information example"
 #>
 
     [CmdletBinding(SupportsShouldProcess=$true)]
