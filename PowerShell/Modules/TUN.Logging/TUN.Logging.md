@@ -15,25 +15,25 @@ Provides easy to use file and mail logging. Documentation of module at https://g
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
 
 ## Module Metadata
-Module version: 1.1.2
-Module GUID: eeac1534-25a5-4429-a073-17ec769525f5
-Author: Markus Szumovski
-Company: ThingsUNeed
-Copyright: (c) 2020 - Markus Szumovski (ThingsUNeed)
-Tags: Core, Linux, Log-File, Log-Files, Log-Mail, Log-Mails, LogFile, LogFiles, Logging, LogMail, LogMails, Logs, Mailing, Mails, Powershell-Core, PowershellCore, PS3, PS4, PS5, PS6, PS7, Windows
-License Uri: https://github.com/echalone/TUN/blob/master/PowerShell/Modules/LICENSE
-Project Uri: https://github.com/echalone/TUN
+* Module version: 1.1.2
+* Module GUID: eeac1534-25a5-4429-a073-17ec769525f5
+* Author: Markus Szumovski
+* Company: ThingsUNeed
+* Copyright: (c) 2020 - Markus Szumovski (ThingsUNeed)
+* Tags: Core, Linux, Log-File, Log-Files, Log-Mail, Log-Mails, LogFile, LogFiles, Logging, LogMail, LogMails, Logs, Mailing, Mails, Powershell-Core, PowershellCore, PS3, PS4, PS5, PS6, PS7, Windows
+* License Uri: https://github.com/echalone/TUN/blob/master/PowerShell/Modules/LICENSE
+* Project Uri: https://github.com/echalone/TUN
 
 ### Release Notes
-V 1.0.0: Initial version
-V 1.0.1: Updated module information
-V 1.0.2: Moved markdown link from HelpInfoUri to description
-V 1.0.3: Fixed icon link
-V 1.0.4: Bumped required module version
-V 1.0.5: Bugfixes for logging from console or function, added logging of user
-V 1.1.0: Bugfixes for Linux, now compatible with Linux Powershell Core
-V 1.1.1: Bugfixing fallback color
-V 1.1.2: Updated markdown help and added examples
+V 1.0.0: Initial version<br/>
+V 1.0.1: Updated module information<br/>
+V 1.0.2: Moved markdown link from HelpInfoUri to description<br/>
+V 1.0.3: Fixed icon link<br/>
+V 1.0.4: Bumped required module version<br/>
+V 1.0.5: Bugfixes for logging from console or function, added logging of user<br/>
+V 1.1.0: Bugfixes for Linux, now compatible with Linux Powershell Core<br/>
+V 1.1.1: Bugfixing fallback color<br/>
+V 1.1.2: Updated markdown help and added examples<br/>
 
 ### Required Modules
 * TUN.Credentials (1.1.0)
