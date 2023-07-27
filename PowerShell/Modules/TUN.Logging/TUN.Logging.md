@@ -1,7 +1,7 @@
 ---
 Module Name: TUN.Logging
 Module Guid: eeac1534-25a5-4429-a073-17ec769525f5
-Module Version: 1.1.2
+Module Version: 1.1.4
 Locale: en-US
 ---
 
@@ -15,7 +15,7 @@ Provides easy to use file and mail logging. Documentation of module at https://g
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
 
 ## Module Metadata
-* Module version: 1.1.2
+* Module version: 1.1.4
 * Module GUID: eeac1534-25a5-4429-a073-17ec769525f5
 * Author: Markus Szumovski
 * Company: ThingsUNeed
@@ -34,6 +34,8 @@ V 1.0.5: Bugfixes for logging from console or function, added logging of user<br
 V 1.1.0: Bugfixes for Linux, now compatible with Linux Powershell Core<br/>
 V 1.1.1: Bugfixing fallback color<br/>
 V 1.1.2: Updated markdown help and added examples<br/>
+V 1.1.3: Changed output of error messages slightly to show more error details<br/>
+V 1.1.4: Bumped version number in markdown readme<br/>
 
 ### Required Modules
 * TUN.Credentials (1.1.0)

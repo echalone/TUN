@@ -1841,8 +1841,16 @@ function Write-ErrorLog {
     $strErrorMessage = ""
 
     if($Err -and $Err.InvocationInfo -and !$NoErrorDetails.IsPresent) {
-        $strErrorMessage += "`r`nScript: $($Err.InvocationInfo.ScriptName), Line: $($Err.InvocationInfo.ScriptLineNumber), Offset: $($Err.InvocationInfo.OffsetInLine)`r`n"
-        $strErrorMessage += "`r`n$($Err.InvocationInfo.Line)`r`n"
+        if($null -ne $Err.ErrorDetails) {
+            if(![string]::IsNullOrWhiteSpace($Err.ErrorDetails.Message)) {
+                $strErrorMessage += "Error-Details: $($Err.ErrorDetails.Message);`r`n"
+            }
+            if(![string]::IsNullOrWhiteSpace($Err.ErrorDetails.RecommendedAction)) {
+                $strErrorMessage += "Recommended action: $($Err.ErrorDetails.RecommendedAction);`r`n"
+            }
+        }
+        $strErrorMessage += "`r`nScript: $($Err.InvocationInfo.ScriptName), Line: $($Err.InvocationInfo.ScriptLineNumber), Offset: $($Err.InvocationInfo.OffsetInLine);`r`n"
+        $strErrorMessage += "`r`n$($Err.InvocationInfo.Line);`r`n"
     }
     $strErrorMessage += $Message
 
@@ -1851,7 +1859,7 @@ function Write-ErrorLog {
     }
 
     if($Exception) {
-        $strErrorMessage += "Error-Details: $($Exception.GetType().FullName), $($Exception.Message)" # - CategoryInfo: $($Err.CategoryInfo)"
+        $strErrorMessage += "Exception-Details: $($Exception.GetType().FullName), $($Exception.Message);" # - CategoryInfo: $($Err.CategoryInfo)"
     }
 
     #and now let's send the error message to the error stream
@@ -1859,7 +1867,7 @@ function Write-ErrorLog {
         if(!$NoOut.IsPresent) {
             Write-Error $strErrorMessage -Category $Category -ErrorId $Err.FullyQualifiedErrorId
         }
-        $strErrorMessage = ($strErrorMessage + " (Err-Category: $Category, Err-Id: $($Err.FullyQualifiedErrorId))")
+        $strErrorMessage = ($strErrorMessage + " (Err-Category: $Category, Err-Id: $($Err.FullyQualifiedErrorId));")
         Write-Log -NoLog:$NoLog -AddTimestamp:$AddTimestamp -Force:$Force -IsError -Message $strErrorMessage
         Write-MailLog -NoMail:$NoMail -Force:$ForceMail -IsError -Message $strErrorMessage
     }
@@ -1867,7 +1875,7 @@ function Write-ErrorLog {
         if(!$NoOut.IsPresent) {
             Write-Error $strErrorMessage -Category $Category
         }
-        $strErrorMessage = ($strErrorMessage + " (Err-Category: $Category)")
+        $strErrorMessage = ($strErrorMessage + " (Err-Category: $Category);")
         Write-Log -NoLog:$NoLog -AddTimestamp:$AddTimestamp -Force:$Force -IsError -Message $strErrorMessage
         Write-MailLog -NoMail:$NoMail -Force:$ForceMail -IsError -Message $strErrorMessage
     }
