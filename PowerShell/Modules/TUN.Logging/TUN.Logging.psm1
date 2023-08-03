@@ -11,64 +11,66 @@ Set-StrictMode -Version Latest
 
 Import-Module "TUN.Credentials" -Force
 
-$script:CmdletSupport_AddContent_NoNewline = $false             # tells us if the Add-Content cmdlet supports the NoNewline parameter
-$script:WhatIfLog = $false                                      # tells us if the -WhatIf switch is set
-$script:LogFile = $null                                         # Path to the logfile
-$script:LogMailCredentialFile = $null                           # Path to the credential file for smtp server authentication (in case of mail log sending)
-$script:LogMailText = ""                                        # The stored text for the mail log
-$script:LogRunning = $false                                     # Is logging in process?
-$script:LogMailRunning = $false                                 # Is logging to mail log in process?
-$script:LogPreference_NoTimestamp = $false                      # Should timestamps for the log-file be omitted?
-$script:LogPreference_AsOutput = $false                         # Should the log file contain whatever the output contains (or everything=$false)?
-$script:LogPreference_MailAsOutput = $false                     # Should the mail log contain whatever the output contains (or everything=$false)?
-$script:LogPreference_FallbackForegroundColor = `               # Fallback color for foreground color if it is not possible to retrieve the information from the console
-                                    [ConsoleColor]::Gray
-$script:LogPreference_FallbackBackgroundColor = `               # Fallback color for background color if it is not possible to retrieve the information from the console
-                                    [ConsoleColor]::Black
-
-[Nullable[bool]] $script:LogPreference_MailError = $null        # Should errors be sent in the log mail? ($null...either always or as output if -AsOutput switch is set)
-[Nullable[bool]] $script:LogPreference_MailHost = $null         # Should host messages be sent in the log mail? ($null...either always or as output if -AsOutput switch is set)
-[Nullable[bool]] $script:LogPreference_MailOutput = $null       # Should output messages be sent in the log mail? ($null...either always or as output if -AsOutput switch is set)
-[Nullable[bool]] $script:LogPreference_MailVerbose = $null      # Should verbose messages be sent in the log mail? ($null...either always or as output if -AsOutput switch is set)
-[Nullable[bool]] $script:LogPreference_MailWarning = $null      # Should warnings be sent in the log mail? ($null...either always or as output if -AsOutput switch is set)
-[Nullable[bool]] $script:LogPreference_MailDebug = $null        # Should debug messages be sent in the log mail? ($null...either always or as output if -AsOutput switch is set)
-[Nullable[bool]] $script:LogPreference_MailInformation = $null  # Should information be sent in the log mail? ($null...either always or as output if -AsOutput switch is set)
-
-[Nullable[bool]] $script:LogPreference_LogError = $null         # Should errors be logged? ($null...either always or as output if -AsOutput switch is set)
-[Nullable[bool]] $script:LogPreference_LogHost = $null          # Should host messages be logged? ($null...either always or as output if -AsOutput switch is set)
-[Nullable[bool]] $script:LogPreference_LogOutput = $null        # Should output messages be logged? ($null...either always or as output if -AsOutput switch is set)
-[Nullable[bool]] $script:LogPreference_LogVerbose = $null       # Should verbose messages be logged? ($null...either always or as output if -AsOutput switch is set)
-[Nullable[bool]] $script:LogPreference_LogWarning = $null       # Should warnings be logged? ($null...either always or as output if -AsOutput switch is set)
-[Nullable[bool]] $script:LogPreference_LogDebug = $null         # Should debug messages be logged? ($null...either always or as output if -AsOutput switch is set)
-[Nullable[bool]] $script:LogPreference_LogInformation = $null   # Should information be logged? ($null...either always or as output if -AsOutput switch is set)
-
-$script:ErrorMailCount = 0                                      # how often has an error been saved for mail log sending?
-$script:HostMailCount = 0                                       # how often has a host message been saved for mail log sending?
-$script:OutputMailCount = 0                                     # how often has an output message been saved for mail log sending?
-$script:VerboseMailCount = 0                                    # how often has a verbose message been saved for mail log sending?
-$script:WarningMailCount = 0                                    # how often has a warning been saved for mail log sending?
-$script:DebugMailCount = 0                                      # how often has a debug message been saved for mail log sending?
-$script:InformationMailCount = 0                                # how often has an information been saved for mail log sending?
-
-$script:ErrorLogCount = 0                                       # how often has an error been logged to the file?
-$script:HostLogCount = 0                                        # how often has a host message been logged to the file?
-$script:OutputLogCount = 0                                      # how often has an output message been logged to the file?
-$script:VerboseLogCount = 0                                     # how often has a verbose message been logged to the file?
-$script:WarningLogCount = 0                                     # how often has a warning been logged to the file?
-$script:DebugLogCount = 0                                       # how often has a debug message been logged to the file?
-$script:InformationLogCount = 0                                 # how often has an information been logged to the file?
-
-$script:ForceLogSend = $false                                   # stores if mail log should be sent forcefully
-$script:ForceLogReason = ""                                     # stores a reason for forced mail log sending
-
-$script:ScriptInfo_Retrieved = $false                           # determines if information about the executing main scriptfile has already been retrieved
-$script:ScriptInfo_Call = $null                                 # The line with which the executing main scriptfile was called
-$script:ScriptInfo_Path = $null                                 # The path to the executing main scriptfile
-$script:ScriptInfo_File = $null                                 # The filename of the executing main scriptfile
-$script:ScriptInfo_Name = $null                                 # The filename without extension of the executing main scriptfile
-$script:ScriptInfo_Version = $null                              # The version of the executing main scriptfile
-$script:ScriptInfo_CurrentUser = $null                          # The user context at the start of logging
-$script:ScriptInfo_ComputerName = $null                         # The machine name at the start of logging
+if(!(Test-Path variable:script:LogRunning)) {
+    $script:CmdletSupport_AddContent_NoNewline = $false             # tells us if the Add-Content cmdlet supports the NoNewline parameter
+    $script:WhatIfLog = $false                                      # tells us if the -WhatIf switch is set
+    $script:LogFile = $null                                         # Path to the logfile
+    $script:LogMailCredentialFile = $null                           # Path to the credential file for smtp server authentication (in case of mail log sending)
+    $script:LogMailText = ""                                        # The stored text for the mail log
+    $script:LogRunning = $false                                     # Is logging in process?
+    $script:LogMailRunning = $false                                 # Is logging to mail log in process?
+    $script:LogPreference_NoTimestamp = $false                      # Should timestamps for the log-file be omitted?
+    $script:LogPreference_AsOutput = $false                         # Should the log file contain whatever the output contains (or everything=$false)?
+    $script:LogPreference_MailAsOutput = $false                     # Should the mail log contain whatever the output contains (or everything=$false)?
+    $script:LogPreference_FallbackForegroundColor = `               # Fallback color for foreground color if it is not possible to retrieve the information from the console
+                                        [ConsoleColor]::Gray
+    $script:LogPreference_FallbackBackgroundColor = `               # Fallback color for background color if it is not possible to retrieve the information from the console
+                                        [ConsoleColor]::Black
+    
+    [Nullable[bool]] $script:LogPreference_MailError = $null        # Should errors be sent in the log mail? ($null...either always or as output if -AsOutput switch is set)
+    [Nullable[bool]] $script:LogPreference_MailHost = $null         # Should host messages be sent in the log mail? ($null...either always or as output if -AsOutput switch is set)
+    [Nullable[bool]] $script:LogPreference_MailOutput = $null       # Should output messages be sent in the log mail? ($null...either always or as output if -AsOutput switch is set)
+    [Nullable[bool]] $script:LogPreference_MailVerbose = $null      # Should verbose messages be sent in the log mail? ($null...either always or as output if -AsOutput switch is set)
+    [Nullable[bool]] $script:LogPreference_MailWarning = $null      # Should warnings be sent in the log mail? ($null...either always or as output if -AsOutput switch is set)
+    [Nullable[bool]] $script:LogPreference_MailDebug = $null        # Should debug messages be sent in the log mail? ($null...either always or as output if -AsOutput switch is set)
+    [Nullable[bool]] $script:LogPreference_MailInformation = $null  # Should information be sent in the log mail? ($null...either always or as output if -AsOutput switch is set)
+    
+    [Nullable[bool]] $script:LogPreference_LogError = $null         # Should errors be logged? ($null...either always or as output if -AsOutput switch is set)
+    [Nullable[bool]] $script:LogPreference_LogHost = $null          # Should host messages be logged? ($null...either always or as output if -AsOutput switch is set)
+    [Nullable[bool]] $script:LogPreference_LogOutput = $null        # Should output messages be logged? ($null...either always or as output if -AsOutput switch is set)
+    [Nullable[bool]] $script:LogPreference_LogVerbose = $null       # Should verbose messages be logged? ($null...either always or as output if -AsOutput switch is set)
+    [Nullable[bool]] $script:LogPreference_LogWarning = $null       # Should warnings be logged? ($null...either always or as output if -AsOutput switch is set)
+    [Nullable[bool]] $script:LogPreference_LogDebug = $null         # Should debug messages be logged? ($null...either always or as output if -AsOutput switch is set)
+    [Nullable[bool]] $script:LogPreference_LogInformation = $null   # Should information be logged? ($null...either always or as output if -AsOutput switch is set)
+    
+    $script:ErrorMailCount = 0                                      # how often has an error been saved for mail log sending?
+    $script:HostMailCount = 0                                       # how often has a host message been saved for mail log sending?
+    $script:OutputMailCount = 0                                     # how often has an output message been saved for mail log sending?
+    $script:VerboseMailCount = 0                                    # how often has a verbose message been saved for mail log sending?
+    $script:WarningMailCount = 0                                    # how often has a warning been saved for mail log sending?
+    $script:DebugMailCount = 0                                      # how often has a debug message been saved for mail log sending?
+    $script:InformationMailCount = 0                                # how often has an information been saved for mail log sending?
+    
+    $script:ErrorLogCount = 0                                       # how often has an error been logged to the file?
+    $script:HostLogCount = 0                                        # how often has a host message been logged to the file?
+    $script:OutputLogCount = 0                                      # how often has an output message been logged to the file?
+    $script:VerboseLogCount = 0                                     # how often has a verbose message been logged to the file?
+    $script:WarningLogCount = 0                                     # how often has a warning been logged to the file?
+    $script:DebugLogCount = 0                                       # how often has a debug message been logged to the file?
+    $script:InformationLogCount = 0                                 # how often has an information been logged to the file?
+    
+    $script:ForceLogSend = $false                                   # stores if mail log should be sent forcefully
+    $script:ForceLogReason = ""                                     # stores a reason for forced mail log sending
+    
+    $script:ScriptInfo_Retrieved = $false                           # determines if information about the executing main scriptfile has already been retrieved
+    $script:ScriptInfo_Call = $null                                 # The line with which the executing main scriptfile was called
+    $script:ScriptInfo_Path = $null                                 # The path to the executing main scriptfile
+    $script:ScriptInfo_File = $null                                 # The filename of the executing main scriptfile
+    $script:ScriptInfo_Name = $null                                 # The filename without extension of the executing main scriptfile
+    $script:ScriptInfo_Version = $null                              # The version of the executing main scriptfile
+    $script:ScriptInfo_CurrentUser = $null                          # The user context at the start of logging
+    $script:ScriptInfo_ComputerName = $null                         # The machine name at the start of logging    
+}
 
 function Coalesce
 {

@@ -36,6 +36,7 @@ V 1.1.1: Bugfixing fallback color<br/>
 V 1.1.2: Updated markdown help and added examples<br/>
 V 1.1.3: Changed output of error messages slightly to show more error details<br/>
 V 1.1.4: Bumped version number in markdown readme<br/>
+V 1.1.7: Only initialize script-wide logging variables if they haven''t already been initialized by another logging module import from a parent script/call<br/>
 
 ### Required Modules
 * TUN.Credentials (1.1.0)
@@ -394,7 +395,7 @@ PARAM
 )
 
 # Import the logging module
-Import-Module "TUN.Logging" -Force
+Import-Module "TUN.Logging"
 
 try {
 	# Start the file logging in the current directory, with computer name, script name and current date all present in the log-filename
